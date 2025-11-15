@@ -1,0 +1,12 @@
+better_with_gold.mcreator
+.gradle
+.mcreator
+.eclipse
+.settings
+bin
+elements
+run
+runs
+mcreator.gradle
+/build/
+**/build

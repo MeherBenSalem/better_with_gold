@@ -1,0 +1,15 @@
+{
+  "type": "minecraft:smithing_transform",
+  "template": {
+    "item": "better_with_gold:upgrade_template"
+  },
+  "base": {
+    "item": "better_with_gold:golden_scythe"
+  },
+  "addition": {
+    "item": "minecraft:amethyst_block"
+  },
+  "result": {
+    "item": "better_with_gold:reinforced_golden_scythe"
+  }
+}

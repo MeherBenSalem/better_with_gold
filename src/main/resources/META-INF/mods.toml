@@ -1,0 +1,46 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+license="All Rights Reserved"
+
+[[mods]]
+modId="better_with_gold"
+version="1.0.0"
+displayName="Better With Gold"
+displayURL="https://www.nightbeam.cloud"
+logoFile="logo.png"
+credits="Thanks Ratz_Borkopf from PMC for the Golden Armor Texture"
+authors="NAIZO"
+
+# Start of user code block mod configuration
+# End of user code block mod configuration
+
+[[dependencies.better_with_gold]]
+modId="minecraft"
+mandatory=true
+versionRange="[1.20.1]"
+ordering="AFTER"
+side="BOTH"
+
+
+
+
+# Start of user code block dependencies configuration
+[[dependencies.memory_of_the_past]]
+modId="jauml"
+mandatory=true
+versionRange="[1.1.0,)"
+ordering="NONE"
+side="BOTH"
+[[dependencies.memory_of_the_past]]
+modId="jauml"
+mandatory=true
+versionRange="[1.1.0,)"
+ordering="NONE"
+side="BOTH"
+[[dependencies.memory_of_the_past]]
+modId="jauml"
+mandatory=true
+versionRange="[1.1.0,)"
+ordering="NONE"
+side="BOTH"
+# End of user code block dependencies configuration
