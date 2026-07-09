@@ -1,0 +1,32 @@
+{
+    "schemaVersion": 1,
+    "id": "better_with_gold",
+    "version": "${version}",
+    "name": "${mod_name}",
+    "description": "${description}",
+    "authors": [
+        "${mod_author}"
+    ],
+    "contact": {
+        "homepage": "https://www.nightbeam.cloud"
+    },
+    "license": "${license}",
+    "icon": "assets/better_with_gold/textures/logo.png",
+    "environment": "*",
+    "entrypoints": {
+        "main": [
+            "tn.nightbeam.better_with_gold.BetterWithGoldMod"
+        ]
+    },
+    "mixins": [
+        "better_with_gold.mixins.json",
+        "better_with_gold.fabric.mixins.json"
+    ],
+    "depends": {
+        "fabricloader": ">=0.14",
+        "fabric": "*",
+        "minecraft": "~${minecraft_version}",
+        "java": ">=25",
+        "jauml": ">=1.1.0"
+    }
+}
