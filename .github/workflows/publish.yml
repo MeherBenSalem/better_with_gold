@@ -53,24 +53,32 @@ jobs:
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: "21"
+          java-version: |
+            17
+            21
+            25
 
       - uses: gradle/actions/setup-gradle@v4
 
-      - name: Build
+      - name: Build all workspaces
+        env:
+          JAVA_HOME_17: ${{ env.JAVA_HOME_17_X64 }}
+          JAVA_HOME_21: ${{ env.JAVA_HOME_21_X64 }}
+          JAVA_HOME_25: ${{ env.JAVA_HOME_25_X64 }}
         run: |
-          chmod +x gradlew 2>/dev/null || true
-          if [ -f gradlew ]; then ./gradlew build --no-daemon
-          else gradle build --no-daemon
-          fi
+          chmod +x gradlew 1.20.1/gradlew 1.21.1/gradlew 26.2/gradlew 2>/dev/null || true
+          ./gradlew buildAll --no-daemon
 
       - name: Find jars
         id: jars
         shell: bash
         run: |
-          mapfile -t JARS < <(find . -type f -path "*/build/libs/*.jar" \
-            ! -name "*-sources.jar" ! -name "*-javadoc.jar" \
-            ! -name "*-dev.jar" ! -name "*-dev-shadow.jar" | head -n 20)
+          mapfile -t JARS < <(find all-jars -type f -name "*.jar" 2>/dev/null | head -n 20)
+          if [ ${#JARS[@]} -eq 0 ]; then
+            mapfile -t JARS < <(find . -type f -path "*/build/libs/*.jar" \
+              ! -name "*-sources.jar" ! -name "*-javadoc.jar" \
+              ! -name "*-dev.jar" ! -name "*-dev-shadow.jar" | head -n 20)
+          fi
           if [ ${#JARS[@]} -eq 0 ]; then
             echo "No jars in build/libs" >&2
             exit 1
