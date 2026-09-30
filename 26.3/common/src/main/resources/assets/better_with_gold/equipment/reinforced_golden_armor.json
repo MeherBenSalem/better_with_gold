@@ -1,0 +1,14 @@
+{
+  "layers": {
+    "humanoid": [
+      {
+        "texture": "better_with_gold:reinforced_golden_armor"
+      }
+    ],
+    "humanoid_leggings": [
+      {
+        "texture": "better_with_gold:reinforced_golden_armor"
+      }
+    ]
+  }
+}

@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.2.2
+
+- Add Minecraft 26.3 support (Fabric + NeoForge), matching the existing 26.2 version root.
+
 ## 1.2.1
 
 - Fix Fabric startup failure: replace invalid `"fabric": "*"` dependency with `"fabric-api": "*"` in all Fabric `fabric.mod.json` files (1.20.1, 1.21.1, 26.2). `"fabric"` is not a mod id and prevented the game from launching.
