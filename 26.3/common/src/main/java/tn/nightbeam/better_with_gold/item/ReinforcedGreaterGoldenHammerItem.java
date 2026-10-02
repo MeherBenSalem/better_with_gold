@@ -16,8 +16,8 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class ReinforcedGreaterGoldenHammerItem extends Item {
 
-	public ReinforcedGreaterGoldenHammerItem() {
-		super(new Properties().durability(1640).enchantable(22).attributes(createAttributes()));
+	public ReinforcedGreaterGoldenHammerItem(Item.Properties properties) {
+		super(properties.durability(1640).enchantable(22).attributes(createAttributes()));
 	}
 
 	private static ItemAttributeModifiers createAttributes() {

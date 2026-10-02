@@ -11,8 +11,8 @@ import net.minecraft.world.level.Level;
 
 public class GoldenFishItem extends Item {
 
-	public GoldenFishItem() {
-		super(new Item.Properties().stacksTo(64).rarity(Rarity.COMMON)
+	public GoldenFishItem(Item.Properties properties) {
+		super(properties.stacksTo(64).rarity(Rarity.COMMON)
 				.food(new FoodProperties.Builder().nutrition(10).saturationModifier(6f).alwaysEdible().build()));
 	}
 

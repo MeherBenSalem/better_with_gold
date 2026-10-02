@@ -18,8 +18,8 @@ import java.util.function.Consumer;
 
 public class GoldenScytheItem extends Item {
 
-	public GoldenScytheItem() {
-		super(ModToolMaterials.GOLDEN_SCYTHE.applyToolProperties(new Properties(), BlockTags.MINEABLE_WITH_AXE, 6f, -2.6f, 12f));
+	public GoldenScytheItem(Item.Properties properties) {
+		super(ModToolMaterials.GOLDEN_SCYTHE.applyToolProperties(properties, BlockTags.MINEABLE_WITH_AXE, 6f, -2.6f, 12f));
 	}
 
 	@Override

@@ -28,6 +28,7 @@ tasks.named('compileJava', JavaCompile) {
 }
 
 processResources {
+    from(rootProject.file('../shared-resources'))
     dependsOn(configurations.commonResources)
     from(configurations.commonResources)
 }

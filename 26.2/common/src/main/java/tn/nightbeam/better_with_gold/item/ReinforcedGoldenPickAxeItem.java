@@ -4,7 +4,7 @@ import net.minecraft.world.item.Item;
 
 public class ReinforcedGoldenPickAxeItem extends Item {
 
-	public ReinforcedGoldenPickAxeItem() {
-		super(new Properties().pickaxe(ModToolMaterials.REINFORCED_GOLDEN, 1f, -2.8f));
+	public ReinforcedGoldenPickAxeItem(Item.Properties properties) {
+		super(properties.pickaxe(ModToolMaterials.REINFORCED_GOLDEN, 1f, -2.8f));
 	}
 }

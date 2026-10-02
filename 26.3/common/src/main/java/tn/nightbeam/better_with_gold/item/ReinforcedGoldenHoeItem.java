@@ -4,7 +4,7 @@ import net.minecraft.world.item.Item;
 
 public class ReinforcedGoldenHoeItem extends Item {
 
-	public ReinforcedGoldenHoeItem() {
-		super(new Properties().hoe(ModToolMaterials.REINFORCED_GOLDEN, 0f, -3f));
+	public ReinforcedGoldenHoeItem(Item.Properties properties) {
+		super(properties.hoe(ModToolMaterials.REINFORCED_GOLDEN, 0f, -3f));
 	}
 }

@@ -12,3 +12,4 @@ out
 .vscode
 .release-upload-state.json
 tools/
+__pycache__/

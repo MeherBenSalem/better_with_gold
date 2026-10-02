@@ -33,6 +33,23 @@ $env:JAVA_HOME = $env:JAVA_HOME_21
 
 Built mod JARs are collected under `all-jars/`.
 
+## Release verification
+
+With the JDKs above and Python `minecraft-launcher-lib` installed:
+
+```powershell
+python scripts/verify-jars.py --version 1.2.3
+python scripts/smoke-client.py --version 1.2.3
+node scripts/upload_platforms.mjs --version 1.2.3 --changelog-file Better-With-Gold-1.2.3-PatchNotes.md
+```
+
+The smoke test loads the actual packaged jars in isolated instances under
+`~/.cache/better-with-gold-tests`. It checks all 17 item registry IDs and the
+current title screen or an inspected world remains loaded for ten seconds. It also
+checks all four reinforced armor texture bindings. A separate test observer closes
+the client normally after verification; it is never included in the released mod.
+Publishing requires a passing report for every jar with a matching SHA-512 hash.
+
 ## Contributing
 
 See [CONTRIBUTING.md](CONTRIBUTING.md).

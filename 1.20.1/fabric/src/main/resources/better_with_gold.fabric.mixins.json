@@ -4,7 +4,7 @@
   "package": "tn.nightbeam.better_with_gold.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [],
-  "client": [],
+  "client": ["ReinforcedArmorTextureMixin"],
   "injectors": {
     "defaultRequire": 1
   },

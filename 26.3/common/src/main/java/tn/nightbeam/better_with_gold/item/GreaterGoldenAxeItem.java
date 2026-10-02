@@ -13,8 +13,8 @@ import java.util.function.Consumer;
 
 public class GreaterGoldenAxeItem extends Item {
 
-	public GreaterGoldenAxeItem() {
-		super(new Properties().axe(ModToolMaterials.GREATER_GOLDEN_AXE, 14f, -3f));
+	public GreaterGoldenAxeItem(Item.Properties properties) {
+		super(properties.axe(ModToolMaterials.GREATER_GOLDEN_AXE, 14f, -3f));
 	}
 
 	@Override

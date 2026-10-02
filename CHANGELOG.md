@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.2.3
+
+- Assign registry IDs before constructing items on Minecraft 26.2 and 26.3, fixing the Fabric `Item id not set` startup crash.
+- Register items and creative tabs during the registry event on every Forge and NeoForge version, avoiding premature reads of deferred entries.
+- Remove the unused JAuml startup dependency; Better With Gold does not use its API. Fabric API remains required for Fabric builds.
+- Restore the original item models, textures, translations, and project icon omitted by the earlier MultiLoader conversion.
+- Connect equipped reinforced armor to its custom textures on all supported versions.
+- Add isolated client boot verification for the actual packaged jars on all nine supported Minecraft/loader combinations.
+
 ## 1.2.2
 
 - Add Minecraft 26.3 support (Fabric + NeoForge), matching the existing 26.2 version root.

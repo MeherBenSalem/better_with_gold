@@ -9,20 +9,26 @@ import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.RegisterEvent;
 import net.minecraft.core.registries.Registries;
 
 @Mod.EventBusSubscriber(modid = Constants.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class ForgeModTabs {
 
-	private static final DeferredRegister<CreativeModeTab> TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, Constants.MOD_ID);
 
 	private ForgeModTabs() {
 	}
 
 	public static void register(IEventBus bus) {
-		ModCreativeTabs.register((id, factory) -> TABS.register(id.getPath(), factory).get());
-		TABS.register(bus);
+		bus.addListener((RegisterEvent event) -> {
+			if (event.getRegistryKey().equals(Registries.CREATIVE_MODE_TAB)) {
+				ModCreativeTabs.register((id, factory) -> {
+					CreativeModeTab tab = factory.get();
+					event.register(Registries.CREATIVE_MODE_TAB, id, () -> tab);
+					return tab;
+				});
+			}
+		});
 	}
 
 	@SubscribeEvent

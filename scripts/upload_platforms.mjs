@@ -4,6 +4,7 @@
 import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
+import { createHash } from "node:crypto";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.join(__dirname, "..");
@@ -73,6 +74,26 @@ function readChangelog(version, changelogFile) {
   return `## ${MOD_TITLE} ${version}\n\nMultiLoader release.`;
 }
 
+function verifyClientBoots(parsed, version) {
+  const reportPath = path.join(JAR_DIR, `client-verification-${version}.json`);
+  if (!fs.existsSync(reportPath)) throw new Error(`Missing client boot report: ${reportPath}`);
+  const results = JSON.parse(fs.readFileSync(reportPath, "utf8"));
+  const expected = ["1.20.1-fabric", "1.20.1-forge", "1.21.1-fabric", "1.21.1-forge",
+    "1.21.1-neoforge", "26.2-fabric", "26.2-neoforge", "26.3-fabric", "26.3-neoforge"];
+  if (parsed.length !== expected.length || new Set(parsed.map(p => `${p.game}-${p.loader}`)).size !== expected.length) {
+    throw new Error("Release must contain all nine supported Minecraft/loader jars");
+  }
+  for (const jar of parsed) {
+    const test = results.find(r => r.case === `${jar.game}-${jar.loader}` && r.version === version);
+    const hash = createHash("sha512").update(fs.readFileSync(jar.jar)).digest("hex");
+    if (!expected.includes(`${jar.game}-${jar.loader}`) || !test?.passed || test.exitCode !== 0 || test.sha512 !== hash
+        || !test.bootEvidence?.includes("registeredItems=17 armorBindings=4")) {
+      throw new Error(`Client boot verification missing, failed, or stale for ${jar.name}`);
+    }
+  }
+  console.log("Verified client boot and SHA-512 for all nine jars");
+}
+
 function loadReleaseState() {
   if (!fs.existsSync(RELEASE_STATE_PATH)) return { uploads: [] };
   try {
@@ -112,7 +133,8 @@ async function uploadToModrinth(parsed, version, changelog, token, dryRun, state
       name: `${version} · ${parsedJar.loader} · ${parsedJar.game}`,
       version_number: `${version}+${parsedJar.loader}-${parsedJar.game}`,
       changelog,
-      dependencies: [],
+      dependencies: parsedJar.loader === "fabric"
+        ? [{ project_id: "P7dR8mSH", dependency_type: "required" }] : [],
       game_versions: [parsedJar.game],
       version_type: "release",
       loaders: [parsedJar.loader],
@@ -170,6 +192,8 @@ async function uploadToCurseForge(parsed, version, changelog, token, apiKey, dry
       displayName: `${version} · ${parsedJar.loader} · ${parsedJar.game}`,
       gameVersions: [clientId, serverId, loaderId, gameHit.id],
       releaseType: "release",
+      ...(parsedJar.loader === "fabric" ? { relations: { projects:
+        [{ slug: "fabric-api", projectID: 306612, type: "requiredDependency" }] } } : {}),
     };
     if (hasRecordedUpload(state, "curseforge", version, parsedJar)) {
       console.log("CurseForge skip", parsedJar.name);
@@ -197,7 +221,7 @@ async function uploadToCurseForge(parsed, version, changelog, token, apiKey, dry
         console.log("CurseForge OK", meta.displayName, parsedJar.name);
         break;
       }
-      if ((res.status === 429 || res.status === 503) && attempt < 4) {
+      if ([429, 500, 503].includes(res.status) && attempt < 4) {
         await new Promise((r) => setTimeout(r, 15000 * attempt));
         continue;
       }
@@ -215,6 +239,7 @@ async function main() {
   const jars = collectJars(version);
   if (!jars.length) throw new Error(`No better_with_gold jars for version ${version} in all-jars/`);
   const parsed = jars.map(parseJar);
+  verifyClientBoots(parsed, version);
 
   const { MODRINTH_TOKEN, CURSEFORGE_TOKEN, CURSEFORGE_API_KEY } = process.env;
   if (!MODRINTH_TOKEN || !CURSEFORGE_TOKEN || !CURSEFORGE_API_KEY) {
