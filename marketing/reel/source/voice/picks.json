@@ -1,0 +1,132 @@
+{
+ "s01": {
+  "take": 1,
+  "ok": true,
+  "heard": "never fight alone again",
+  "dur": 1.89,
+  "rate": 4.55,
+  "pitch": 6.93,
+  "punch": 12.38,
+  "f0": 179
+ },
+ "s02": {
+  "take": 1,
+  "ok": true,
+  "heard": "hire a warband of sellswords",
+  "dur": 2.1,
+  "rate": 4.3,
+  "pitch": 5.6,
+  "punch": 14.77,
+  "f0": 170
+ },
+ "s03": {
+  "take": 2,
+  "ok": true,
+  "heard": "bulwarks taunt and hold the line",
+  "dur": 1.99,
+  "rate": 4.3,
+  "pitch": 4.39,
+  "punch": 10.43,
+  "f0": 168
+ },
+ "s04": {
+  "take": 6,
+  "ok": true,
+  "heard": "rangers rain arrows",
+  "dur": 1.51,
+  "rate": 4.03,
+  "pitch": 6.47,
+  "punch": 10.56,
+  "f0": 148
+ },
+ "s05": {
+  "take": 1,
+  "ok": true,
+  "heard": "arcanists call down the storm",
+  "dur": 1.8,
+  "rate": 4.27,
+  "pitch": 5.33,
+  "punch": 16.11,
+  "f0": 163
+ },
+ "s06": {
+  "take": 2,
+  "ok": true,
+  "heard": "menders keep everyone standing",
+  "dur": 2.0,
+  "rate": 5.17,
+  "pitch": 5.78,
+  "punch": 10.6,
+  "f0": 202
+ },
+ "s07": {
+  "take": 3,
+  "ok": true,
+  "heard": "hold g and command them all",
+  "dur": 2.26,
+  "rate": 3.15,
+  "pitch": 4.97,
+  "punch": 11.11,
+  "f0": 168
+ },
+ "s08": {
+  "take": 3,
+  "ok": true,
+  "heard": "shield wall wedge charge",
+  "dur": 2.53,
+  "rate": 2.65,
+  "pitch": 6.98,
+  "punch": 14.28,
+  "f0": 198
+ },
+ "s09": {
+  "take": 6,
+  "ok": true,
+  "heard": "someone goes down crouch and pull them back up",
+  "dur": 3.42,
+  "rate": 3.29,
+  "pitch": 4.42,
+  "punch": 10.84,
+  "f0": 180
+ },
+ "s10": {
+  "take": 2,
+  "ok": true,
+  "heard": "plant the warbanner and they hold the ground",
+  "dur": 2.62,
+  "rate": 4.13,
+  "pitch": 4.56,
+  "punch": 13.33,
+  "f0": 162
+ },
+ "s11": {
+  "take": 1,
+  "ok": true,
+  "heard": "every ally writes their own chronicle",
+  "dur": 2.09,
+  "rate": 6.06,
+  "pitch": 5.3,
+  "punch": 9.96,
+  "f0": 140
+ },
+ "s12": {
+  "take": 2,
+  "ok": true,
+  "heard": "it s called remnants fellowship",
+  "dur": 2.13,
+  "rate": 4.95,
+  "pitch": 5.93,
+  "punch": 15.61,
+  "f0": 169
+ },
+ "s13": {
+  "take": 3,
+  "ok": true,
+  "heard": "who joins your warband",
+  "dur": 1.22,
+  "rate": 4.46,
+  "pitch": 5.32,
+  "punch": 11.6,
+  "f0": 137
+ }
+}

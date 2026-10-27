@@ -1,0 +1,83 @@
+{
+ "duration": 36.4777,
+ "lines": [
+  {
+   "i": 0,
+   "start": 0.12,
+   "end": 2.007,
+   "cap": "Never fight alone again!"
+  },
+  {
+   "i": 1,
+   "start": 2.45,
+   "end": 4.554,
+   "cap": "Hire a warband of sellswords!"
+  },
+  {
+   "i": 2,
+   "start": 5.8,
+   "end": 7.79,
+   "cap": "Bulwarks taunt, and hold the line!"
+  },
+  {
+   "i": 3,
+   "start": 7.859,
+   "end": 9.369,
+   "cap": "Rangers rain arrows!"
+  },
+  {
+   "i": 4,
+   "start": 10.119,
+   "end": 11.92,
+   "cap": "Arcanists call down the storm!"
+  },
+  {
+   "i": 5,
+   "start": 12.519,
+   "end": 14.516,
+   "cap": "Menders keep everyone standing!"
+  },
+  {
+   "i": 6,
+   "start": 14.919,
+   "end": 17.177,
+   "cap": "Hold G, and command them all!"
+  },
+  {
+   "i": 7,
+   "start": 17.799,
+   "end": 20.325,
+   "cap": "Shield wall! Wedge! Charge!"
+  },
+  {
+   "i": 8,
+   "start": 20.699,
+   "end": 24.123,
+   "cap": "Someone goes down? Crouch, and pull them back up!"
+  },
+  {
+   "i": 9,
+   "start": 24.518,
+   "end": 27.134,
+   "cap": "Plant the Warbanner, and they hold the ground!"
+  },
+  {
+   "i": 10,
+   "start": 27.398,
+   "end": 29.487,
+   "cap": "Every ally writes their own chronicle."
+  },
+  {
+   "i": 11,
+   "start": 29.658,
+   "end": 31.788,
+   "cap": "It's called Remnants Fellowship."
+  },
+  {
+   "i": 12,
+   "start": 32.798,
+   "end": 34.018,
+   "cap": "Who joins your warband?"
+  }
+ ]
+}

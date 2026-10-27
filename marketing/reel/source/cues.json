@@ -1,0 +1,177 @@
+{
+ "duration": 36.4777,
+ "beat": 0.47997,
+ "music_in": 69.648,
+ "events": {
+  "hook_hit": 0.22,
+  "hire_click": 3.3498,
+  "taunt": 6.3796,
+  "volley": 8.1795,
+  "storm": 11.479,
+  "mend_heals": [
+   12.9292
+  ],
+  "wheel_open": 15.1491,
+  "wheel_pick": 15.8791,
+  "wheel_release": 16.9591,
+  "shield": 17.7589,
+  "wedge": 19.059,
+  "charge": 19.639,
+  "down": 20.9887,
+  "crouch": 22.359,
+  "plant": 24.8785,
+  "guard": 25.878,
+  "roster": 27.3583,
+  "title": 29.7581,
+  "cta": 32.638,
+  "cuts": [
+   0.0,
+   2.3998,
+   4.3197,
+   5.7596,
+   7.6795,
+   10.0794,
+   12.4792,
+   14.8791,
+   17.7589,
+   19.059,
+   19.639,
+   20.6387,
+   24.4785,
+   25.878,
+   27.3583,
+   29.7581,
+   32.638
+  ],
+  "revived": 23.9785
+ },
+ "labels": [
+  {
+   "t0": 2.3998,
+   "t1": 4.3197,
+   "name": "Sellswords",
+   "sub": "Hired with <b>gold</b> at the village bell",
+   "icon": "coin",
+   "color": "#F2C94C"
+  },
+  {
+   "t0": 5.7596,
+   "t1": 7.6795,
+   "name": "Bulwark",
+   "sub": "<b>Challenge</b> pulls every enemy onto it",
+   "icon": "tank",
+   "color": "#4F8FE0"
+  },
+  {
+   "t0": 7.6795,
+   "t1": 10.0794,
+   "name": "Ranger",
+   "sub": "<b>Volley</b>: three arrows at once",
+   "icon": "ranged",
+   "color": "#5DBB63"
+  },
+  {
+   "t0": 10.0794,
+   "t1": 12.4792,
+   "name": "Arcanist",
+   "sub": "<b>Arc Storm</b> strikes the whole pack",
+   "icon": "caster",
+   "color": "#A06BE0"
+  },
+  {
+   "t0": 12.4792,
+   "t1": 14.8791,
+   "name": "Mender",
+   "sub": "<b>Mend</b> heals and revives",
+   "icon": "healer",
+   "color": "#F2C94C"
+  },
+  {
+   "t0": 14.8791,
+   "t1": 17.7589,
+   "name": "Command Wheel",
+   "sub": "Hold <b>G</b> \u00b7 eight orders",
+   "icon": "charge",
+   "color": "#F2C94C"
+  },
+  {
+   "t0": 17.7589,
+   "t1": 20.6387,
+   "name": "Formations",
+   "sub": "Line \u00b7 Wedge \u00b7 Shield Wall \u00b7 Circle",
+   "icon": "formation",
+   "color": "#F2C94C"
+  },
+  {
+   "t0": 20.6387,
+   "t1": 24.4785,
+   "name": "Downed, not dead",
+   "sub": "<b>30 s</b> to pull them back up",
+   "icon": "revive",
+   "color": "#E5534B"
+  },
+  {
+   "t0": 24.4785,
+   "t1": 27.3583,
+   "name": "Warbanner",
+   "sub": "Plant it \u00b7 they guard it",
+   "icon": "guard_banner",
+   "color": "#F2C94C"
+  },
+  {
+   "t0": 27.3583,
+   "t1": 29.7581,
+   "name": "Chronicle",
+   "sub": "Every deed, written down",
+   "icon": "star",
+   "color": "#F2C94C"
+  }
+ ],
+ "flashes": [
+  [
+   0.22,
+   0.55
+  ],
+  [
+   11.479,
+   0.45
+  ],
+  [
+   24.8785,
+   0.3
+  ],
+  [
+   29.7581,
+   0.55
+  ]
+ ],
+ "capHigh": [],
+ "capLow": [
+  [
+   14.8791,
+   17.7589
+  ],
+  [
+   20.6387,
+   27.3583
+  ],
+  [
+   27.3583,
+   29.7581
+  ]
+ ],
+ "hook": [
+  0.0,
+  0.0,
+  0.0
+ ],
+ "title": [
+  29.7581,
+  32.638
+ ],
+ "titleWord": 30.2381,
+ "comment": [
+  34.118,
+  36.358
+ ]
+}

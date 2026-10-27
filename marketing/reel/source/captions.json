@@ -1,0 +1,466 @@
+[
+ {
+  "start": 0.12,
+  "end": 2.37,
+  "words": [
+   {
+    "text": "NEVER",
+    "start": 0.12,
+    "end": 0.52
+   },
+   {
+    "text": "FIGHT",
+    "start": 0.52,
+    "end": 0.9
+   },
+   {
+    "text": "ALONE",
+    "start": 0.9,
+    "end": 1.3
+   },
+   {
+    "text": "AGAIN!",
+    "start": 1.62,
+    "end": 1.92
+   }
+  ]
+ },
+ {
+  "start": 2.64,
+  "end": 3.52,
+  "words": [
+   {
+    "text": "HIRE",
+    "start": 2.64,
+    "end": 2.72
+   },
+   {
+    "text": "A",
+    "start": 2.72,
+    "end": 3.02
+   },
+   {
+    "text": "WARBAND",
+    "start": 3.02,
+    "end": 3.52
+   }
+  ]
+ },
+ {
+  "start": 3.52,
+  "end": 4.79,
+  "words": [
+   {
+    "text": "OF",
+    "start": 3.52,
+    "end": 3.72
+   },
+   {
+    "text": "SELLSWORDS!",
+    "start": 3.72,
+    "end": 4.34
+   }
+  ]
+ },
+ {
+  "start": 5.92,
+  "end": 6.54,
+  "words": [
+   {
+    "text": "BULWARKS",
+    "start": 5.92,
+    "end": 6.22
+   },
+   {
+    "text": "TAUNT,",
+    "start": 6.22,
+    "end": 6.54
+   }
+  ]
+ },
+ {
+  "start": 6.54,
+  "end": 7.829,
+  "words": [
+   {
+    "text": "AND",
+    "start": 6.54,
+    "end": 7.02
+   },
+   {
+    "text": "HOLD",
+    "start": 7.02,
+    "end": 7.24
+   },
+   {
+    "text": "THE",
+    "start": 7.24,
+    "end": 7.42
+   },
+   {
+    "text": "LINE!",
+    "start": 7.42,
+    "end": 7.72
+   }
+  ]
+ },
+ {
+  "start": 8.04,
+  "end": 9.61,
+  "words": [
+   {
+    "text": "RANGERS",
+    "start": 8.04,
+    "end": 8.34
+   },
+   {
+    "text": "RAIN",
+    "start": 8.34,
+    "end": 8.7
+   },
+   {
+    "text": "ARROWS!",
+    "start": 8.7,
+    "end": 9.16
+   }
+  ]
+ },
+ {
+  "start": 10.24,
+  "end": 11.32,
+  "words": [
+   {
+    "text": "ARCANISTS",
+    "start": 10.24,
+    "end": 10.72
+   },
+   {
+    "text": "CALL",
+    "start": 10.72,
+    "end": 11.08
+   },
+   {
+    "text": "DOWN",
+    "start": 11.08,
+    "end": 11.32
+   }
+  ]
+ },
+ {
+  "start": 11.32,
+  "end": 12.27,
+  "words": [
+   {
+    "text": "THE",
+    "start": 11.32,
+    "end": 11.5
+   },
+   {
+    "text": "STORM!",
+    "start": 11.5,
+    "end": 11.82
+   }
+  ]
+ },
+ {
+  "start": 12.68,
+  "end": 14.83,
+  "words": [
+   {
+    "text": "MENDERS",
+    "start": 12.68,
+    "end": 12.86
+   },
+   {
+    "text": "KEEP",
+    "start": 12.86,
+    "end": 13.22
+   },
+   {
+    "text": "EVERYONE",
+    "start": 13.22,
+    "end": 13.84
+   },
+   {
+    "text": "STANDING!",
+    "start": 13.84,
+    "end": 14.38
+   }
+  ]
+ },
+ {
+  "start": 14.919,
+  "end": 15.54,
+  "words": [
+   {
+    "text": "HOLD",
+    "start": 14.919,
+    "end": 15.16
+   },
+   {
+    "text": "G,",
+    "start": 15.16,
+    "end": 15.54
+   }
+  ]
+ },
+ {
+  "start": 15.54,
+  "end": 17.63,
+  "words": [
+   {
+    "text": "AND",
+    "start": 15.54,
+    "end": 16.14
+   },
+   {
+    "text": "COMMAND",
+    "start": 16.14,
+    "end": 16.52
+   },
+   {
+    "text": "THEM",
+    "start": 16.52,
+    "end": 16.82
+   },
+   {
+    "text": "ALL!",
+    "start": 16.82,
+    "end": 17.18
+   }
+  ]
+ },
+ {
+  "start": 17.98,
+  "end": 18.91,
+  "words": [
+   {
+    "text": "SHIELD",
+    "start": 17.98,
+    "end": 18.16
+   },
+   {
+    "text": "WALL!",
+    "start": 18.16,
+    "end": 18.46
+   }
+  ]
+ },
+ {
+  "start": 19.16,
+  "end": 19.87,
+  "words": [
+   {
+    "text": "WEDGE!",
+    "start": 19.16,
+    "end": 19.42
+   }
+  ]
+ },
+ {
+  "start": 19.96,
+  "end": 20.47,
+  "words": [
+   {
+    "text": "CHARGE!",
+    "start": 19.96,
+    "end": 20.02
+   }
+  ]
+ },
+ {
+  "start": 20.72,
+  "end": 22.17,
+  "words": [
+   {
+    "text": "SOMEONE",
+    "start": 20.72,
+    "end": 21.06
+   },
+   {
+    "text": "GOES",
+    "start": 21.06,
+    "end": 21.32
+   },
+   {
+    "text": "DOWN?",
+    "start": 21.32,
+    "end": 21.72
+   }
+  ]
+ },
+ {
+  "start": 22.34,
+  "end": 23.0,
+  "words": [
+   {
+    "text": "CROUCH,",
+    "start": 22.34,
+    "end": 22.76
+   }
+  ]
+ },
+ {
+  "start": 23.0,
+  "end": 23.56,
+  "words": [
+   {
+    "text": "AND",
+    "start": 23.0,
+    "end": 23.18
+   },
+   {
+    "text": "PULL",
+    "start": 23.18,
+    "end": 23.36
+   },
+   {
+    "text": "THEM",
+    "start": 23.36,
+    "end": 23.56
+   }
+  ]
+ },
+ {
+  "start": 23.56,
+  "end": 24.488,
+  "words": [
+   {
+    "text": "BACK",
+    "start": 23.56,
+    "end": 23.78
+   },
+   {
+    "text": "UP!",
+    "start": 23.78,
+    "end": 24.1
+   }
+  ]
+ },
+ {
+  "start": 24.518,
+  "end": 25.725,
+  "words": [
+   {
+    "text": "PLANT",
+    "start": 24.518,
+    "end": 24.853
+   },
+   {
+    "text": "THE",
+    "start": 24.853,
+    "end": 25.055
+   },
+   {
+    "text": "WARBANNER,",
+    "start": 25.055,
+    "end": 25.725
+   }
+  ]
+ },
+ {
+  "start": 25.725,
+  "end": 26.463,
+  "words": [
+   {
+    "text": "AND",
+    "start": 25.725,
+    "end": 25.927
+   },
+   {
+    "text": "THEY",
+    "start": 25.927,
+    "end": 26.195
+   },
+   {
+    "text": "HOLD",
+    "start": 26.195,
+    "end": 26.463
+   }
+  ]
+ },
+ {
+  "start": 26.463,
+  "end": 27.368,
+  "words": [
+   {
+    "text": "THE",
+    "start": 26.463,
+    "end": 26.664
+   },
+   {
+    "text": "GROUND!",
+    "start": 26.664,
+    "end": 27.134
+   }
+  ]
+ },
+ {
+  "start": 27.42,
+  "end": 28.44,
+  "words": [
+   {
+    "text": "EVERY",
+    "start": 27.42,
+    "end": 27.72
+   },
+   {
+    "text": "ALLY",
+    "start": 27.72,
+    "end": 28.12
+   },
+   {
+    "text": "WRITES",
+    "start": 28.12,
+    "end": 28.44
+   }
+  ]
+ },
+ {
+  "start": 28.44,
+  "end": 29.628,
+  "words": [
+   {
+    "text": "THEIR",
+    "start": 28.44,
+    "end": 28.7
+   },
+   {
+    "text": "OWN",
+    "start": 28.7,
+    "end": 28.98
+   },
+   {
+    "text": "CHRONICLE.",
+    "start": 28.98,
+    "end": 29.4
+   }
+  ]
+ },
+ {
+  "start": 32.8,
+  "end": 36.328,
+  "words": [
+   {
+    "text": "WHO",
+    "start": 32.8,
+    "end": 32.96
+   },
+   {
+    "text": "JOINS",
+    "start": 32.96,
+    "end": 33.28
+   },
+   {
+    "text": "YOUR",
+    "start": 33.28,
+    "end": 33.52
+   },
+   {
+    "text": "WARBAND?",
+    "start": 33.52,
+    "end": 33.96
+   }
+  ]
+ }
+]

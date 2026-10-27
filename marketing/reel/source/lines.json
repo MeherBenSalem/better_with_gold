@@ -1,0 +1,93 @@
+[
+ {
+  "i": 0,
+  "sid": "s01",
+  "cap": "Never fight alone again!",
+  "dur": 1.887,
+  "sr": 24000
+ },
+ {
+  "i": 1,
+  "sid": "s02",
+  "cap": "Hire a warband of sellswords!",
+  "dur": 2.104,
+  "sr": 24000
+ },
+ {
+  "i": 2,
+  "sid": "s03",
+  "cap": "Bulwarks taunt, and hold the line!",
+  "dur": 1.99,
+  "sr": 24000
+ },
+ {
+  "i": 3,
+  "sid": "s04",
+  "cap": "Rangers rain arrows!",
+  "dur": 1.51,
+  "sr": 24000
+ },
+ {
+  "i": 4,
+  "sid": "s05",
+  "cap": "Arcanists call down the storm!",
+  "dur": 1.801,
+  "sr": 24000
+ },
+ {
+  "i": 5,
+  "sid": "s06",
+  "cap": "Menders keep everyone standing!",
+  "dur": 1.997,
+  "sr": 24000
+ },
+ {
+  "i": 6,
+  "sid": "s07",
+  "cap": "Hold G, and command them all!",
+  "dur": 2.258,
+  "sr": 24000
+ },
+ {
+  "i": 7,
+  "sid": "s08",
+  "cap": "Shield wall! Wedge! Charge!",
+  "dur": 2.526,
+  "sr": 24000
+ },
+ {
+  "i": 8,
+  "sid": "s09",
+  "cap": "Someone goes down? Crouch, and pull them back up!",
+  "dur": 3.424,
+  "sr": 24000
+ },
+ {
+  "i": 9,
+  "sid": "s10",
+  "cap": "Plant the Warbanner, and they hold the ground!",
+  "dur": 2.616,
+  "sr": 24000
+ },
+ {
+  "i": 10,
+  "sid": "s11",
+  "cap": "Every ally writes their own chronicle.",
+  "dur": 2.089,
+  "sr": 24000
+ },
+ {
+  "i": 11,
+  "sid": "s12",
+  "cap": "It's called Remnants Fellowship.",
+  "dur": 2.13,
+  "sr": 24000
+ },
+ {
+  "i": 12,
+  "sid": "s13",
+  "cap": "Who joins your warband?",
+  "dur": 1.22,
+  "sr": 24000
+ }
+]

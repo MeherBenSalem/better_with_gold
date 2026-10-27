@@ -1,7 +1,7 @@
 #!/bin/bash
 # Downloads the reel's sound effects from Mixkit (Mixkit Sound Effects Free License: free for commercial use in
 # videos, no attribution required) into $1 (default ./sfxlib), as WAV. sfx_pro.py reads them from there.
-# A few files are only served as MP3 previews; those are converted to WAV. Nothing here is synthesized.
+# A few files are served as MP3 previews and nothing else; those are converted to WAV. Nothing here is synthesized.
 set -e
 D=${1:-sfxlib}; mkdir -p "$D"
 for id in 2780 2289 2785 461 2175 459 2918 2908 788 2900 2901 2762 2763 2764 2765 2794 2795 2792 2775 2774 1993 1989 3187 \
@@ -15,3 +15,5 @@ for id in 2780 2289 2785 461 2175 459 2918 2908 788 2900 2901 2762 2763 2764 276
   fi
 done
 ls "$D" | wc -l
+# The music bed: "Epical Drums 04" (Mixkit Stock Music Free License); audio.py reads /home/user/musiclib/679.mp3.
+mkdir -p musiclib && [ -s musiclib/679.mp3 ] || curl -sf --max-time 120 -o musiclib/679.mp3 "https://assets.mixkit.co/music/679/679.mp3"

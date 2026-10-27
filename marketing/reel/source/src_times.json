@@ -1,0 +1,6 @@
+{"front_storm": 1.08, "hire_click": 1.78, "march_in": 1.5, "taunt_clip": "taunt2", "taunt_ring": 1.97,
+ "volley_loose": 0.86, "storm_strike": 2.88, "mend_in": 3.55, "mend_heals": [4.0, 7.0],
+ "wheel_in": 0.45, "wheel_open": 0.72, "wheel_pick": 1.45, "wheel_release": 2.53,
+ "form_shield": 1.35, "form_wedge": 4.85, "form_charge": 9.0,
+ "downed_hit": 0.68, "downed_crouch": 2.05, "downed_revived": 5.2,
+ "plant_click": 1.15, "guard_in": 1.4, "roster_in": 4.6, "title_clip": "march", "title_in": 3.0, "cta_in": 0.3}
