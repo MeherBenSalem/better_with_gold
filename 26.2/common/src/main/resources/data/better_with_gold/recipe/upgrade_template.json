@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "aba",
+    "aca",
+    "aaa"
+  ],
+  "key": {
+    "a": "minecraft:gold_ingot",
+    "b": "minecraft:obsidian",
+    "c": "minecraft:amethyst_shard"
+  },
+  "result": {
+    "id": "better_with_gold:upgrade_template",
+    "count": 1
+  }
+}

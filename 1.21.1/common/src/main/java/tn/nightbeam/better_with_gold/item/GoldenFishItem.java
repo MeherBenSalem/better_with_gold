@@ -8,6 +8,10 @@ import net.minecraft.world.item.Rarity;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.TooltipFlag;
+
+import java.util.List;
 
 public class GoldenFishItem extends Item {
 
@@ -21,5 +25,11 @@ public class GoldenFishItem extends Item {
 		ItemStack retval = super.finishUsingItem(itemstack, world, entity);
 		GoldenFishPlayerFinishesUsingItemProcedure.execute(entity);
 		return retval;
+	}
+
+	@Override
+	public void appendHoverText(ItemStack stack, Item.TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+		super.appendHoverText(stack, context, tooltip, flag);
+		tooltip.add(Component.translatable("item.better_with_gold.golden_fish.description_0"));
 	}
 }

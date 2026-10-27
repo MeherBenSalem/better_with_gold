@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "aaa",
+    "ab ",
+    " b "
+  ],
+  "key": {
+    "a": "minecraft:gold_ingot",
+    "b": "minecraft:stick"
+  },
+  "result": {
+    "id": "better_with_gold:golden_scythe",
+    "count": 1
+  }
+}

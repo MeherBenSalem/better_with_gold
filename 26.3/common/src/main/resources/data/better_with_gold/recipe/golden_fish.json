@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    "aaa",
+    "aba",
+    "aaa"
+  ],
+  "key": {
+    "a": "minecraft:gold_ingot",
+    "b": "minecraft:cooked_cod"
+  },
+  "result": {
+    "id": "better_with_gold:golden_fish",
+    "count": 1
+  }
+}

@@ -39,3 +39,28 @@ artifacts {
     commonResources sourceSets.main.resources.sourceDirectories.singleFile
 }
 
+
+// Plain-Java regression checks for the Fellowship core: threat, formations, progression, chronicle, saved data.
+sourceSets {
+    test {
+        java {
+            srcDir 'src/test/java'
+        }
+    }
+}
+
+dependencies {
+    testImplementation 'com.google.code.gson:gson:2.10.1'
+}
+
+tasks.register('coreRegression', JavaExec) {
+    group = 'verification'
+    description = 'Runs the pure-Java CoreRegression checks.'
+    dependsOn tasks.named('testClasses')
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'tn.nightbeam.better_with_gold.core.CoreRegression'
+}
+
+tasks.named('check') {
+    dependsOn 'coreRegression'
+}

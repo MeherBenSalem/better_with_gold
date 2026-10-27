@@ -1,0 +1,17 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "a a",
+    "aba",
+    " b "
+  ],
+  "key": {
+    "a": "minecraft:gold_block",
+    "b": "minecraft:stick"
+  },
+  "result": {
+    "id": "better_with_gold:greater_golden_hammer",
+    "count": 1
+  }
+}

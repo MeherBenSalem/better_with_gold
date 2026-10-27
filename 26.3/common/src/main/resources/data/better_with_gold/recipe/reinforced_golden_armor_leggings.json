@@ -1,0 +1,9 @@
+{
+  "type": "minecraft:smithing_transform",
+  "template": "better_with_gold:upgrade_template",
+  "base": "minecraft:golden_leggings",
+  "addition": "minecraft:amethyst_block",
+  "result": {
+    "id": "better_with_gold:reinforced_golden_armor_leggings"
+  }
+}

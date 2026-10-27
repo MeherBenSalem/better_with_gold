@@ -1,9 +1,28 @@
 package tn.nightbeam.better_with_gold;
 
+import tn.nightbeam.better_with_gold.ally.AllyEntity;
+import tn.nightbeam.better_with_gold.ally.Fellowship;
+import tn.nightbeam.better_with_gold.ally.ThreatLabelEntity;
+import tn.nightbeam.better_with_gold.command.FellowshipCommands;
+import tn.nightbeam.better_with_gold.compat.Compat;
+import tn.nightbeam.better_with_gold.net.FabricPayloads;
 import tn.nightbeam.better_with_gold.registry.FabricModItems;
 import tn.nightbeam.better_with_gold.registry.FabricModTabs;
+import tn.nightbeam.better_with_gold.registry.ModEntities;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.entity.event.v1.ServerLivingEntityEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
+import net.minecraft.core.Registry;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.MobCategory;
 
 public class BetterWithGoldMod implements ModInitializer {
 
@@ -11,6 +30,32 @@ public class BetterWithGoldMod implements ModInitializer {
 	public void onInitialize() {
 		FabricModItems.register();
 		FabricModTabs.register();
+		registerEntities();
+		FabricDefaultAttributeRegistry.register(ModEntities.ALLY.get(), AllyEntity.createAttributes());
+
+		PayloadTypeRegistry.playC2S().register(FabricPayloads.ToServer.TYPE, FabricPayloads.ToServer.CODEC);
+		PayloadTypeRegistry.playS2C().register(FabricPayloads.ToClient.TYPE, FabricPayloads.ToClient.CODEC);
+		ServerPlayNetworking.registerGlobalReceiver(FabricPayloads.ToServer.TYPE,
+				(payload, context) -> context.server().execute(() -> Fellowship.handle(context.player(), payload.json())));
+
+		ServerLifecycleEvents.SERVER_STARTED.register(Fellowship::serverStarted);
+		ServerLifecycleEvents.SERVER_STOPPING.register(Fellowship::serverStopping);
+		ServerTickEvents.END_SERVER_TICK.register(Fellowship::tick);
+		ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> Fellowship.join(handler.player));
+		ServerPlayConnectionEvents.DISCONNECT.register((handler, server) -> Fellowship.leave(handler.player));
+		ServerLivingEntityEvents.ALLOW_DAMAGE.register(Fellowship::allowDamage);
+		ServerLivingEntityEvents.AFTER_DEATH.register(Fellowship::onDeath);
+		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> FellowshipCommands.register(dispatcher));
 		BetterWithGold.init();
+	}
+
+	private static void registerEntities() {
+		EntityType<AllyEntity> ally = Registry.register(BuiltInRegistries.ENTITY_TYPE, Compat.id(Constants.MOD_ID, ModEntities.ALLY_ID),
+				EntityType.Builder.<AllyEntity>of(AllyEntity::new, MobCategory.MISC).sized(0.6F, 1.8F).clientTrackingRange(10).build(ModEntities.ALLY_ID));
+		EntityType<ThreatLabelEntity> label = Registry.register(BuiltInRegistries.ENTITY_TYPE, Compat.id(Constants.MOD_ID, ModEntities.THREAT_LABEL_ID),
+				EntityType.Builder.<ThreatLabelEntity>of(ThreatLabelEntity::new, MobCategory.MISC).sized(0.05F, 0.05F).noSave().noSummon()
+						.clientTrackingRange(6).updateInterval(5).build(ModEntities.THREAT_LABEL_ID));
+		ModEntities.ALLY = () -> ally;
+		ModEntities.THREAT_LABEL = () -> label;
 	}
 }

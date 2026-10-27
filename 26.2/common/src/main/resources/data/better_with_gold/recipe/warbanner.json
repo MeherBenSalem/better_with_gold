@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    " g ",
+    "gbg",
+    " s "
+  ],
+  "key": {
+    "g": "minecraft:gold_ingot",
+    "b": "minecraft:black_banner",
+    "s": "minecraft:stick"
+  },
+  "result": {
+    "id": "better_with_gold:warbanner",
+    "count": 1
+  }
+}
