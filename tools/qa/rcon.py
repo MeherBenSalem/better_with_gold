@@ -46,7 +46,18 @@ class Rcon:
         return rid, text
 
     def command(self, cmd):
-        return self._request(2, cmd)[1]
+        # A marker packet of an unknown type follows the command: every server answers it ("Unknown request") after
+        # the command's own reply, so a reply split over several packets is joined, and a command with no output
+        # still returns (Forge 1.21.1's RCON sends no packet at all for an empty reply).
+        rid = self._packet(2, cmd)
+        mark = self._packet(200, '')
+        parts = []
+        while True:
+            got, _, text = self._read()
+            if got == mark:
+                return ''.join(parts)
+            if got == rid:
+                parts.append(text)
 
     def close(self):
         self.sock.close()
