@@ -97,6 +97,20 @@ def main():
     zombies = count(s, '@e[type=minecraft:zombie]')
     check('warband kills the zombies', zombies == 0, f'{zombies} left')
 
+    # After the fight the band follows the leader again (a formation goal that stopped re-pathing once froze some).
+    as_player(s, 'fellowship order follow')
+    s.cmd(f'tp {PLAYER} 0 -60 -8 180 10')
+    after = 0
+    for _ in range(15):
+        time.sleep(1)
+        m = re.search(r'count: (\d+)', s.cmd(f'execute at {PLAYER} if entity @e[type=better_with_gold:ally,distance=..8]'), re.IGNORECASE)
+        after = int(m.group(1)) if m else 0
+        if after == 5:
+            break
+    check('allies follow again after the fight', after == 5, f'{after} within 8 blocks')
+    s.cmd(f'tp {PLAYER} 0 -60 12 0 10')
+    time.sleep(3)
+
     # Downed and revived.
     # Down one ally (tagged, so the revive check reads the same one) and keep the Mender away so the player revives.
     s.cmd('effect clear @e[type=better_with_gold:ally]', 'tag @e[type=better_with_gold:ally] remove qa_downed', 'tag @e[type=better_with_gold:ally] remove qa_skip')

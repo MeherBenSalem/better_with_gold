@@ -23,6 +23,11 @@ public class AllyFallBackGoal extends Goal {
 	}
 
 	@Override
+	public boolean requiresUpdateEveryTick() {
+		return true;
+	}
+
+	@Override
 	public void tick() {
 		ServerPlayer owner = ally.owner();
 		if (owner == null) {

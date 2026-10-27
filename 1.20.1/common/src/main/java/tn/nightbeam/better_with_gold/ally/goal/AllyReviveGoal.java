@@ -56,6 +56,12 @@ public class AllyReviveGoal extends Goal {
 		patient = null;
 	}
 
+	// Ticked every tick, so a Mender's revive takes menderReviveSeconds (not twice that) and its effects fire.
+	@Override
+	public boolean requiresUpdateEveryTick() {
+		return true;
+	}
+
 	@Override
 	public void tick() {
 		ally.getLookControl().setLookAt(patient, 30, 30);

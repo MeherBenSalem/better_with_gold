@@ -45,11 +45,23 @@ class Rcon:
         rid, _, text = self._read()
         return rid, text
 
-    def command(self, cmd):
-        # A marker packet of an unknown type follows the command: every server answers it ("Unknown request") after
-        # the command's own reply, so a reply split over several packets is joined, and a command with no output
-        # still returns (Forge 1.21.1's RCON sends no packet at all for an empty reply).
+    def command(self, cmd, quiet_after=2.0):
+        # Forge 1.21.1's RCON sends no packet at all for a command with no output (its patched RconClient loops over
+        # the reply's bytes), so a plain request/reply client would wait forever. When nothing comes back within
+        # quiet_after seconds, a marker request of an unknown type follows; every server answers it ("Unknown
+        # request") after the command's own reply. The marker is never sent together with the command: vanilla's
+        # RconClient drops the connection when one read holds two packets.
         rid = self._packet(2, cmd)
+        timeout = self.sock.gettimeout()
+        self.sock.settimeout(quiet_after)
+        try:
+            got, _, text = self._read()
+            if got == rid:
+                return text
+        except TimeoutError:
+            pass
+        finally:
+            self.sock.settimeout(timeout)
         mark = self._packet(200, '')
         parts = []
         while True:

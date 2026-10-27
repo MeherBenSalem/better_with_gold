@@ -63,6 +63,13 @@ public class AllyFormationGoal extends Goal {
 		}
 	}
 
+	// Ticked every tick: a goal that is not ticks every other tick (by entity id), and the re-path below checks
+	// tickCount % 10, so for half the allies the two never lined up and they stopped following.
+	@Override
+	public boolean requiresUpdateEveryTick() {
+		return true;
+	}
+
 	@Override
 	public void tick() {
 		if (ally.tickCount % 10 == 0) {

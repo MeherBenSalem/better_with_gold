@@ -54,7 +54,7 @@ public final class FellowshipConfig {
 	public boolean allowPvp = false;
 	/** Shows, above each engaged enemy, who holds its aggro. */
 	public boolean aggroLabels = true;
-	/** An enemy switches target only when someone beats its current target's aggro by this much. */
+	/** An enemy keeps its target until someone beats that target's aggro by this much. */
 	public double aggroSwitchRatio = 1.1;
 	/** Following allies further than this many blocks from the leader teleport to it. */
 	public int teleportDistance = 40;
