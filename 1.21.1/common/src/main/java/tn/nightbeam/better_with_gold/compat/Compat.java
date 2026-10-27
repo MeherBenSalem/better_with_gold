@@ -359,8 +359,9 @@ public final class Compat {
 		return level.getGameTime();
 	}
 
+	/** The in-game day, counting the first day as day 1. */
 	public static long day(Level level) {
-		return level.getDayTime() / 24000L;
+		return level.getDayTime() / 24000L + 1;
 	}
 
 	public static boolean isCrouching(Player player) {

@@ -305,6 +305,19 @@ public final class Warbands {
 		return ally;
 	}
 
+	/** An ally made by /summon or a spawn egg has no identity yet: it becomes a sellsword of a random class. */
+	public static void fillBlank(AllyEntity ally) {
+		List<AllyClass> classes = tn.nightbeam.better_with_gold.core.ClassCatalog.enabled();
+		AllyClass c = classes.get(RANDOM.nextInt(classes.size()));
+		int level = 1 + RANDOM.nextInt(3) + (int) Math.min(8, Compat.day(ally.level()) / 8);
+		AllyRecord record = Recruits.roll(new Random(RANDOM.nextLong()), c, Math.min(FellowshipConfig.INSTANCE.levelCap, level));
+		record.leaveAt = Compat.gameTime(ally.level()) + FellowshipConfig.INSTANCE.sellswordStayMinutes * 1200L;
+		ally.setRecord(record);
+		ally.equipKit();
+		ally.applyStats(true);
+		ally.refreshNameplate();
+	}
+
 	private static void swear(AllyEntity ally, ServerPlayer owner) {
 		AllyRecord r = ally.record();
 		WarbandState s = state(owner.getUUID());
@@ -314,6 +327,7 @@ public final class Warbands {
 		r.swornDay = Compat.day(owner.level());
 		r.leaveAt = 0;
 		r.order = s.orderValue() == Order.FOCUS ? Order.FOLLOW.id() : s.order;
+		r.name = uniqueName(s, owner.getUUID(), r.name, ally.getUUID());
 		if (!r.visited.contains(Compat.dimensionId(ally.level()))) {
 			r.visited.add(Compat.dimensionId(ally.level()));
 		}
@@ -321,6 +335,33 @@ public final class Warbands {
 		ally.chronicle(Chronicle.Type.SWORN, r.ownerName, Compat.biomeName(ally.level(), ally.blockPosition()), 0);
 		ally.applyStats(true);
 		track(ally);
+	}
+
+	/** Keeps names unique inside one warband, so the roster and the chronicle never show two of the same. */
+	private static String uniqueName(WarbandState s, UUID owner, String wanted, UUID self) {
+		java.util.Set<String> taken = new java.util.HashSet<>();
+		s.seen.forEach((id, seen) -> {
+			if (!id.equals(self.toString())) {
+				taken.add(seen.name.toLowerCase(Locale.ROOT));
+			}
+		});
+		s.stowed.forEach(st -> taken.add(AllyRecord.fromJson(st.record).name.toLowerCase(Locale.ROOT)));
+		for (AllyEntity a : liveAllies(owner)) {
+			if (!a.getUUID().equals(self)) {
+				taken.add(a.record().name.toLowerCase(Locale.ROOT));
+			}
+		}
+		if (!taken.contains(wanted.toLowerCase(Locale.ROOT))) {
+			return wanted;
+		}
+		List<String> names = new ArrayList<>(Recruits.names());
+		java.util.Collections.shuffle(names, RANDOM);
+		for (String name : names) {
+			if (!taken.contains(name.toLowerCase(Locale.ROOT))) {
+				return name;
+			}
+		}
+		return wanted;
 	}
 
 	public static boolean hire(AllyEntity ally, ServerPlayer player) {

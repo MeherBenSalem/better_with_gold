@@ -503,6 +503,9 @@ public class AllyEntity extends PathfinderMob implements OwnableEntity {
 	}
 
 	private void serverTick(ServerLevel server) {
+		if (record.name.isEmpty()) {
+			Warbands.fillBlank(this);
+		}
 		if (isDowned()) {
 			tickDowned(server);
 			if (tickCount % 10 == 0) {

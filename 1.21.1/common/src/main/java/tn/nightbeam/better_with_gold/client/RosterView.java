@@ -255,6 +255,10 @@ public final class RosterView {
 		});
 	}
 
+	private static String plural(int n, String one, String many) {
+		return n + " " + (n == 1 ? one : many);
+	}
+
 	private void renderFallen(Canvas c, JsonObject e, float x0, float y0, float x1, float y1) {
 		int color = 0xFF000000 | Net.integer(e, "col", 0xC8A04A);
 		c.text(Net.string(e, "name", "?"), x0, y0, 1.15F, color, true);
