@@ -39,6 +39,16 @@ def count(s, selector):
     return int(m.group(1)) if m else 0
 
 
+def clear(s, selector):
+    """Kills everything matching selector. A killed slime splits into smaller ones when its death animation ends
+    (20 ticks later), so this repeats, past each animation, until nothing is left."""
+    for _ in range(6):
+        if not count(s, selector):
+            return
+        s.cmd(f'kill {selector}')
+        time.sleep(1.6)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--shots', default='/tmp/fs-qa/shots')
@@ -46,9 +56,12 @@ def main():
     args = ap.parse_args()
     shots = Path(args.shots)
     s = Session(display=args.display)
-    s.cmd(f'op {PLAYER}', 'gamerule doDaylightCycle false', 'time set 6000', 'weather clear', 'gamerule doMobSpawning false',
-          f'gamemode survival {PLAYER}', f'effect give {PLAYER} minecraft:resistance 99999 4 true', f'tp {PLAYER} 0 -60 0 0 10',
-          'kill @e[type=!minecraft:player]')
+    # 26.x renamed the game rules (doMobSpawning is spawn_mobs, and monsters have their own spawn_monsters); each
+    # server rejects the spellings it does not know.
+    s.cmd(f'op {PLAYER}', 'gamerule doDaylightCycle false', 'gamerule advance_time false', 'time set 6000', 'weather clear',
+          'gamerule doMobSpawning false', 'gamerule spawn_mobs false', 'gamerule spawn_monsters false',
+          f'gamemode survival {PLAYER}', f'effect give {PLAYER} minecraft:resistance 99999 4 true', f'tp {PLAYER} 0 -60 0 0 10')
+    clear(s, '@e[type=!minecraft:player]')  # the flat world fills with slimes while the server starts
     time.sleep(2)
 
     # Recruit one of each class.
@@ -154,7 +167,12 @@ def main():
     summary = as_player(s, 'fellowship')
     check('wheel gives an order', 'order' in summary, summary.strip())
 
-    # Warbanner: plant it on the ground in front of the player, allies form up around it.
+    # Warbanner: plant it on the ground in front of the player, allies form up around it. Guarding allies still
+    # fight enemies near the banner, so anything left over is counted (the log shows it) and cleared first.
+    strays = '@e[type=!minecraft:player,type=!better_with_gold:ally,type=!better_with_gold:aggro_label]'
+    kinds = {k: count(s, f'@e[type=minecraft:{k}]') for k in ('slime', 'item', 'arrow', 'experience_orb', 'zombie')}
+    print(f'note: {count(s, strays)} other entities cleared before the Warbanner check {kinds}', flush=True)
+    clear(s, strays)
     s.cmd(f'give {PLAYER} better_with_gold:warbanner', f'item replace entity {PLAYER} weapon.mainhand with better_with_gold:warbanner')
     s.tp(0, -60, 30, yaw=0, pitch=60)
     time.sleep(1)

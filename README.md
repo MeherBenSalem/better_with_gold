@@ -1,5 +1,7 @@
 # Remnants | Fellowship
 
+![Remnants | Fellowship](marketing/images/banner.png)
+
 Hire named sellswords with gold and lead them as a warband. Five classes, aggro and taunts, allies that are downed
 instead of killed and revived by you or a Mender, formations, a command wheel, a Warbanner to rally on, and a
 Chronicle written from what each ally actually lived through.

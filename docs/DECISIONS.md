@@ -81,6 +81,11 @@ at the bottom of each section.
   and stretched a Mender's 5-second revive. Found while filming the Reel; the after-fight check covers it.
 - **Aggro labels draw out to 48 blocks.** The label is a 0.05-block entity, and vanilla skips drawing an entity
   farther than 64 times its size, so labels vanished beyond about 3 blocks. Found while taking the store screenshots.
+- **The QA world is cleared of slimes until none are left.** The flat test world fills with slimes while the
+  server starts, before the checks can turn spawning off (26.x spells the rules `spawn_mobs` and `spawn_monsters`;
+  the checks send both spellings), and `/kill` splits each big slime into smaller ones a second later. Left over,
+  they pulled guarding allies away from the Warbanner on 26.2 NeoForge. The checks log what they clear before that
+  check.
 - **26.3 NeoForge declares the icon with `iconFile`.** With `logoFile`, NeoForge for 26.3 shows a warning screen on
   every launch. 26.2 NeoForge and the older loaders do not know `iconFile`, so they keep `logoFile`.
 
