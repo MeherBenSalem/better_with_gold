@@ -1,6 +1,6 @@
 # Traits
 
-Every recruit rolls one or two traits from its class's list; the first one gives its epithet.
+Every recruit rolls one or two traits from its class's list; the leading one gives its epithet.
 
 | Trait | Effect | Epithets |
 |---|---|---|

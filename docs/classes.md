@@ -1,7 +1,8 @@
 # Classes
 
 Every recruit has one of these classes. The numbers are the 2.0.0 defaults from the class files the mod writes to
-`config/better_with_gold/classes/` on first start; edit those files (or add new ones) and run `/fellowship reload`.
+`config/better_with_gold/classes/` when the server starts without them; edit those files (or add new ones) and run
+`/fellowship reload`.
 
 | Class | Role | Health | Damage | Armour | Speed | Hire (gold) | Weapon |
 |---|---|---|---|---|---|---|---|

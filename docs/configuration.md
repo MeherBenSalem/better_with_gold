@@ -1,7 +1,8 @@
 # Configuration
 
-`config/better_with_gold/fellowship.json` is written on first server start with every option. Values outside a safe
-range are clamped; a broken file falls back to the defaults. Run `/fellowship reload` after editing.
+`config/better_with_gold/fellowship.json` is written with every option when the server starts without it.
+Values outside a safe range are clamped; a broken file falls back to the defaults. Run `/fellowship reload` after
+editing.
 
 | Option | Default | What it does |
 |---|---|---|
@@ -23,7 +24,7 @@ range are clamped; a broken file falls back to the defaults. Run `/fellowship re
 | `friendlyFire` | `false` | Leaders can hurt their own allies. |
 | `allowPvp` | `false` | Allies fight players who attack their leader. |
 | `aggroLabels` | `true` | Shows, above each engaged enemy, who holds its aggro. |
-| `aggroSwitchRatio` | `1.1` | An enemy switches target only when someone beats its current target's aggro by this much. |
+| `aggroSwitchRatio` | `1.1` | An enemy keeps its target until someone beats that target's aggro by this much. |
 | `teleportDistance` | `40` | Following allies further than this many blocks from the leader teleport to it. |
 | `regaliaDamagePerPiece` | `0.03` | Each piece of Reinforced Golden Armour the leader wears adds this to allies' damage, within 24 blocks. |
 | `regaliaMoraleFloorPerPiece` | `5` | Each piece also raises the lowest morale allies can fall to. |

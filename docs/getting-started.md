@@ -49,7 +49,7 @@ Allies earn experience for every kill they help with (half the enemy's health, a
 reach level 20 (titles at 5, 10, 15 and 20: Veteran, Champion, Hero, Legend). Morale (0 to 100) goes up with kills
 and revives and down when allies fall; at 80 or more allies deal 10% more damage, at 25 or less 15% less.
 
-Every ally keeps a **Chronicle** written from what actually happened: where it swore the oath, its first kill, kill
+Every ally keeps a **Chronicle** written from what actually happened: where it swore the oath, the kill that blooded it, kill
 milestones, bosses it fought or slew, the times it went down and who pulled it back, the dimensions it crossed into.
 
 ## 7. Travelling

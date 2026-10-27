@@ -59,7 +59,9 @@ PROPS
     fi
     ;;
   start-server)
-    cd "$ROOT/$2" && nohup ./gradlew ":$3:runServer" --no-daemon > "$LOGS/$3-server.log" 2>&1 &
+    # ForgeGradle 6 (Forge 1.21.1) names run tasks after taskName: Server, QaClient.
+    task=$([ "$2/$3" = 1.21.1/forge ] && echo Server || echo runServer)
+    cd "$ROOT/$2" && nohup ./gradlew ":$3:$task" --no-daemon > "$LOGS/$3-server.log" 2>&1 &
     ;;
   start-client)
     # Skip the first-launch screens (accessibility onboarding, multiplayer warning) and pausing when unfocused.
@@ -71,11 +73,12 @@ PROPS
     # 26.3+ windows through SDL3, which only finds a usable visual on Xvfb through EGL (Debian/Ubuntu packages
     # libegl1 and libegl-mesa0; without them the client stops with "Could not load EGL library").
     export DISPLAY=${DISPLAY:-:1} LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe SDL_VIDEO_FORCE_EGL=1 ${QA_CLIENT_ENV:-}
-    cd "$ROOT/$2" && nohup ./gradlew ":$3:runQaClient" --no-daemon > "$LOGS/$3-client.log" 2>&1 &
+    task=$([ "$2/$3" = 1.21.1/forge ] && echo QaClient || echo runQaClient)
+    cd "$ROOT/$2" && nohup ./gradlew ":$3:$task" --no-daemon > "$LOGS/$3-client.log" 2>&1 &
     ;;
   stop-client|stop-server)
     # Only java processes are considered, so this never matches the calling shell.
-    want=$([ "$1" = stop-client ] && echo 'KnotClient|clientQaClient|runQaClient|--quickPlayMultiplayer' || echo 'KnotServer|runServer|forgeserver|serverData|neoforgeserver')
+    want=$([ "$1" = stop-client ] && echo 'KnotClient|clientQaClient|runQaClient|QaClient|--quickPlayMultiplayer' || echo 'KnotServer|runServer|forgeserver|serverData|neoforgeserver|:forge:Server')
     for pid in $(pgrep -x java); do
       cmd=$(tr '\0' ' ' < "/proc/$pid/cmdline")
       if echo "$cmd" | grep -qE "$want" && { [ -z "${2:-}" ] || echo "$cmd $(readlink "/proc/$pid/cwd")" | grep -q "/$2/"; }; then kill "$pid"; fi

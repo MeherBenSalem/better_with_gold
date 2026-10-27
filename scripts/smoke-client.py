@@ -1,6 +1,7 @@
 """Boot actual release jars in isolated clients and record hashes and startup results.
 
-Requires Python's minecraft-launcher-lib and the JDKs used by the workspaces.
+Requires Python's minecraft-launcher-lib and the JDKs used by the workspaces (JAVA_HOME_17, JAVA_HOME_21 and
+JAVA_HOME_25). Runs on Windows and on Linux (with a display; Xvfb works).
 The test observer is a separate Java agent and never enters a released mod jar.
 """
 import argparse
@@ -15,6 +16,12 @@ import urllib.request
 import zipfile
 
 from minecraft_launcher_lib import command, install, mod_loader
+
+WINDOWS = os.name == "nt"
+
+
+def exe(path):
+    return Path(str(path) + (".exe" if WINDOWS else ""))
 
 ROOT = Path(__file__).resolve().parent.parent
 CACHE = Path.home() / ".cache" / "better-with-gold-tests"
@@ -66,18 +73,18 @@ def build_agent():
     destination = CACHE / "observer"
     destination.mkdir(parents=True, exist_ok=True)
     source = ROOT / "scripts/smoke/ClientBootAgent.java"
-    subprocess.run([str(JAVA["17"] / "bin/javac.exe"), "--release", "17", "-d", str(destination), str(source)], check=True)
+    subprocess.run([str(exe(JAVA["17"] / "bin/javac")), "--release", "17", "-d", str(destination), str(source)], check=True)
     manifest = destination / "MANIFEST.MF"
     manifest.write_text("Manifest-Version: 1.0\nPremain-Class: ClientBootAgent\n\n")
     agent = destination / "client-boot-agent.jar"
-    subprocess.run([str(JAVA["17"] / "bin/jar.exe"), "cfm", str(agent), str(manifest), "-C", str(destination), "ClientBootAgent.class"], check=True)
+    subprocess.run([str(exe(JAVA["17"] / "bin/jar")), "cfm", str(agent), str(manifest), "-C", str(destination), "ClientBootAgent.class"], check=True)
     return agent
 
 
 def run_case(workspace, loader, args, agent, releases, dependencies):
     case = f"{workspace}-{loader}"
     props = properties(workspace)
-    java = JAVA[props["java_version"]] / "bin/java.exe"
+    java = exe(JAVA[props["java_version"]] / "bin/java")
     game = CACHE / "runs" / args.version / case
     mods = game / "mods"
     mods.mkdir(parents=True, exist_ok=True)
@@ -139,7 +146,7 @@ def run_case(workspace, loader, args, agent, releases, dependencies):
     start = time.monotonic()
     with (game / ("inspection.log" if args.inspect else "launcher.log")).open("w", encoding="utf-8") as log:
         process = subprocess.Popen([str(java), "@" + str(argument_file)], cwd=game, stdout=log, stderr=subprocess.STDOUT,
-                                   creationflags=subprocess.CREATE_NO_WINDOW)
+                                   **({"creationflags": subprocess.CREATE_NO_WINDOW} if WINDOWS else {}))
         if args.inspect:
             print(f"Inspection client open: PID {process.pid}; game directory {game}", flush=True)
             return None

@@ -24,6 +24,7 @@ public final class ClientBootAgent {
                 Object client = null;
                 Class<?> minecraft = null;
                 Class<?> items = null;
+                Class<?> entities = null;
                 for (Class<?> type : instrumentation.getAllLoadedClasses()) {
                     if (type.getName().equals("net.minecraft.client.Minecraft")
                             || type.getName().equals("net.minecraft.class_310")) {
@@ -31,6 +32,9 @@ public final class ClientBootAgent {
                     }
                     if (type.getName().equals("tn.nightbeam.better_with_gold.registry.ModItems")) {
                         items = type;
+                    }
+                    if (type.getName().equals("tn.nightbeam.better_with_gold.registry.ModEntities")) {
+                        entities = type;
                     }
                 }
                 if (minecraft == null || items == null) continue;
@@ -87,10 +91,15 @@ public final class ClientBootAgent {
                         count++;
                     }
                 }
-                if (count != 17) throw new IllegalStateException("Expected 17 items, found " + count);
+                if (count != 18) throw new IllegalStateException("Expected 18 items, found " + count);
+                if (entities == null) throw new IllegalStateException("Fellowship entities not loaded");
+                verifyEntity(entities, "ALLY", "better_with_gold:ally");
+                verifyEntity(entities, "THREAT_LABEL", "better_with_gold:aggro_label");
                 Path result = Path.of(System.getProperty("bwg.smoke.result"));
-                Files.writeString(result, "PASS state=" + readyState + " stableSeconds=10 loadingOverlay=false registeredItems=" + count + " armorBindings=4\n");
-                System.out.println("[BWG BOOT TEST] PASS " + readyState + " stable for 10 seconds; all 17 item registry IDs and four armor texture bindings verified");
+                Files.writeString(result, "PASS state=" + readyState + " stableSeconds=10 loadingOverlay=false registeredItems=" + count
+                        + " armorBindings=4 entityTypes=2\n");
+                System.out.println("[BWG BOOT TEST] PASS " + readyState + " stable for 10 seconds; all 18 item registry IDs, four armor texture"
+                        + " bindings and both Fellowship entity types verified");
                 // Let the render thread close its own window and resources.
                 Object finishedClient = client;
                 Method stop = null;
@@ -129,6 +138,45 @@ public final class ClientBootAgent {
             }
         }
         throw new IllegalStateException("Current screen/overlay field not found: " + namedType);
+    }
+
+    /** Checks that ModEntities.{field} holds an entity type registered under {expected}, whatever the mappings. */
+    private static void verifyEntity(Class<?> entities, String field, String expected) throws ReflectiveOperationException {
+        Object supplier = entities.getField(field).get(null);
+        if (supplier == null) throw new IllegalStateException("Entity type not registered: " + field);
+        Object type = ((java.util.function.Supplier<?>) supplier).get();
+        ClassLoader loader = type.getClass().getClassLoader();
+        Class<?> registries;
+        try {
+            registries = Class.forName("net.minecraft.core.registries.BuiltInRegistries", false, loader);
+        } catch (ClassNotFoundException ignored) {
+            registries = Class.forName("net.minecraft.class_7923", false, loader);
+        }
+        Class<?> registryInterface;
+        try {
+            registryInterface = Class.forName("net.minecraft.core.Registry", false, loader);
+        } catch (ClassNotFoundException ignored) {
+            registryInterface = Class.forName("net.minecraft.class_2378", false, loader);
+        }
+        for (Field registryField : registries.getDeclaredFields()) {
+            if (!Modifier.isStatic(registryField.getModifiers()) || !registryInterface.isAssignableFrom(registryField.getType())) continue;
+            Object registry = registryField.get(null);
+            for (Method method : registryInterface.getMethods()) {
+                String returnType = method.getReturnType().getName();
+                if ((returnType.equals("net.minecraft.resources.ResourceLocation") || returnType.equals("net.minecraft.resources.Identifier")
+                        || returnType.equals("net.minecraft.class_2960"))
+                        && method.getParameterCount() == 1 && method.getParameterTypes()[0] == Object.class) {
+                    Object key;
+                    try {
+                        key = method.invoke(registry, type);
+                    } catch (ReflectiveOperationException | RuntimeException ignored) {
+                        continue;
+                    }
+                    if (key != null && String.valueOf(key).equals(expected)) return;
+                }
+            }
+        }
+        throw new IllegalStateException("Entity type " + expected + " not found in any registry");
     }
 
     private static void verifyRegistryId(Object item, String fieldName) throws ReflectiveOperationException {

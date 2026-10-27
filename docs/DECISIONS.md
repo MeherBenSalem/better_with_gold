@@ -52,6 +52,21 @@ at the bottom of each section.
   leader's RPG level (minimum 5). Allies' kills credit the leader (`setLastHurtByPlayer`), so vanilla experience
   and player-only drops still happen.
 
+## Presentation
+
+- **Effects are server-side vanilla particles and sounds**, played by a small scheduler (`ally/Fx.java`) that runs
+  an animation one frame per tick. Every client sees them with no resource pack and no client code, on every
+  version. Effects only use particle types that exist unchanged from 1.20.1 to 26.3.
+- **GUI art is drawn, not shipped as sprites**, except the command wheel. Icons are 16x16 pixel art authored in
+  `tools/gen_icons.py` and drawn as coloured squares on the shared Canvas, so they are crisp at every GUI scale and
+  identical on every version. The wheel's slices are smooth 512x512 textures from `tools/gen_gui.py`, drawn
+  rotated: 26.x GUI rendering only draws (transformed) rectangles, so a texture is the clean way to get curved
+  slices on all four versions.
+- **Skins and item icons are generated** by `tools/gen_textures.py` (materials, then details, then one lighting
+  pass), so a palette change or a new variant is one edit and the output is reproducible.
+- **The roster portrait is the real entity**, drawn with each version's inventory-portrait call; its name tag is
+  hidden for the draw. Allies at camp or away show their class emblem instead.
+
 ## Scope (cut from the bottom)
 
 - Tier 1 (2.0.0): Warbanner, aggro and taunts, downed and revive, roster with Chronicle, command wheel and

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Pixel-art GUI icons for Remnants | Fellowship, drawn in code so every Minecraft version shares them.
 
-    python3 tools/gen_icons.py [preview.png]
+    python3 tools/gen_icons.py [preview.png] [--png folder]
 
 Writes 1.21.1/common/src/main/java/tn/nightbeam/better_with_gold/client/Icons.java (copied to the other versions by
 tools/sync-shared.sh). Each icon is 16x16; 'c', 'C' and 'x' take the tint passed when drawing (a class colour), the
@@ -608,9 +608,33 @@ public final class Icons {{
     JAVA.write_text(src)
 
 
+CLASS_TINTS = {"tank": 0x4F8FE0, "melee": 0xD9483B, "ranged": 0x5DBB63, "healer": 0xF2C94C, "caster": 0xA06BE0}
+
+
+def export_png(folder):
+    """Every icon as a 16x16 PNG (role icons in their default class colour), for the marketing artwork."""
+    from PIL import Image
+    folder = Path(folder)
+    folder.mkdir(parents=True, exist_ok=True)
+    for name, rows in ICONS.items():
+        img = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
+        tint = CLASS_TINTS.get(name, 0xC8A04A)
+        for j, row in enumerate(rows):
+            for i, ch in enumerate(row):
+                col = color(ch, tint)
+                if col is not None:
+                    img.putpixel((i, j), ((col >> 16) & 255, (col >> 8) & 255, col & 255, 255))
+        img.save(folder / f"icon-{name}.png")
+
+
 if __name__ == "__main__":
     check()
-    if len(sys.argv) > 1:
-        preview(sys.argv[1])
+    args = sys.argv[1:]
+    if "--png" in args:
+        k = args.index("--png")
+        export_png(args[k + 1])
+        del args[k:k + 2]
+    if args:
+        preview(args[0])
     java()
     print("wrote", JAVA)

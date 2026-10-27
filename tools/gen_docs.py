@@ -2,7 +2,7 @@
 """Generates the reference pages in docs/ from the mod itself, so the numbers in the docs and on the store page
 always match the defaults:
 
-- docs/classes.md from the class files the mod writes on first start (config/better_with_gold/classes/*.json),
+- docs/classes.md from the class files the mod writes when they are missing (config/better_with_gold/classes/*.json),
 - docs/configuration.md from FellowshipConfig.java (defaults and the comment above each field),
 - docs/traits.md from Trait.java,
 - docs/reference/ copies of the generated config files.
@@ -34,7 +34,8 @@ def classes(config_dir):
     ids = [i for i in ORDER if i in files] + sorted(i for i in files if i not in ORDER)
     lines = ["# Classes", "",
              "Every recruit has one of these classes. The numbers are the 2.0.0 defaults from the class files the mod writes to",
-             "`config/better_with_gold/classes/` on first start; edit those files (or add new ones) and run `/fellowship reload`.",
+             "`config/better_with_gold/classes/` when the server starts without them; edit those files (or add new ones) and run",
+             "`/fellowship reload`.",
              "", "| Class | Role | Health | Damage | Armour | Speed | Hire (gold) | Weapon |", "|---|---|---|---|---|---|---|---|"]
     for i in ids:
         c = files[i]
@@ -81,8 +82,9 @@ def configuration():
         else:
             comment = ""
     lines = ["# Configuration", "",
-             "`config/better_with_gold/fellowship.json` is written on first server start with every option. Values outside a safe",
-             "range are clamped; a broken file falls back to the defaults. Run `/fellowship reload` after editing.", "",
+             "`config/better_with_gold/fellowship.json` is written with every option when the server starts without it.",
+             "Values outside a safe range are clamped; a broken file falls back to the defaults. Run `/fellowship reload` after",
+             "editing.", "",
              "| Option | Default | What it does |", "|---|---|---|"]
     for name, value, comment in rows:
         lines.append(f"| `{name}` | `{value}` | {comment} |")
@@ -92,7 +94,7 @@ def configuration():
 
 def traits():
     src = (SRC / "Trait.java").read_text()
-    lines = ["# Traits", "", "Every recruit rolls one or two traits from its class's list; the first one gives its epithet.", "",
+    lines = ["# Traits", "", "Every recruit rolls one or two traits from its class's list; the leading one gives its epithet.", "",
              "| Trait | Effect | Epithets |", "|---|---|---|"]
     for m in re.finditer(r'\n\t(\w+)\("([^"]+)", "([^"]+)", new String\[\]\{([^}]*)\}\)', src):
         _, label, desc, epithets = m.groups()

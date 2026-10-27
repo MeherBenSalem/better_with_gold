@@ -10,4 +10,4 @@ Allies are entities of type `better_with_gold:ally` (class `tn.nightbeam.better_
   attacker, so damage events in other mods see them.
 - The aggro label above an engaged enemy is a separate entity, `better_with_gold:aggro_label`, never saved.
 
-Optional integration with RPG Attribute System uses only its public `RasApi.getLevel(Player)`, by reflection.
+Optional integration with RPG Attribute System uses its public `RasApi.getLevel(Player)` and nothing else, by reflection.
