@@ -45,6 +45,15 @@ public class ThreatLabelEntity extends Entity {
 		return false;
 	}
 
+	/**
+	 * The label is a speck (0.05 blocks), and vanilla draws an entity within 64 times its size, which would hide the
+	 * label beyond about 3 blocks. Draw it as far as a name tag reads.
+	 */
+	@Override
+	public boolean shouldRenderAtSqrDistance(double distance) {
+		return distance < 48 * 48;
+	}
+
 	@Override
 	public boolean isPickable() {
 		return false;

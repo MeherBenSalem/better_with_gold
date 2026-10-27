@@ -69,14 +69,33 @@ at the bottom of each section.
 
 ## Testing
 
-- **One play-through for all nine builds.** `tools/qa/fellowship_checks.py` runs the same 15 checks (recruiting,
-  following in formation, aggro labels, combat, downed and revived, the command wheel, the Warbanner) on a dev
-  server and a real client under Xvfb, on every version and loader. All nine pass.
-- **The QA RCON client waits for a marker reply.** Forge 1.21.1's RCON sends no packet at all for a command with no
-  output, and the order and formation commands answer in the action bar, so a plain request/reply client hung. A
-  request of an unknown type follows each command; every server answers it after the command's own reply.
+- **One play-through for all nine builds.** `tools/qa/fellowship_checks.py` runs the same checks (recruiting,
+  following in formation, aggro labels, combat, downed and revived, following again after a fight, the command
+  wheel, the Warbanner) on a dev server and a real client under Xvfb, on every version and loader.
+- **The QA RCON client reads a reply, or waits for a marker.** Forge 1.21.1's RCON sends no packet at all for a
+  command with no output, and vanilla's client-side reader drops the connection when two packets arrive in one read.
+  So the client waits briefly for the command's own reply; when none comes, it sends a request of an unknown type,
+  which every server answers, and reads up to that answer.
+- **Formation, revive and fall-back goals tick every tick.** A goal that does not ask for it runs on alternate ticks,
+  chosen by the parity of the server tick plus the entity id, which left some allies standing still after a fight
+  and stretched a Mender's 5-second revive. Found while filming the Reel; the after-fight check covers it.
+- **Aggro labels draw out to 48 blocks.** The label is a 0.05-block entity, and vanilla skips drawing an entity
+  farther than 64 times its size, so labels vanished beyond about 3 blocks. Found while taking the store screenshots.
 - **26.3 NeoForge declares the icon with `iconFile`.** With `logoFile`, NeoForge for 26.3 shows a warning screen on
   every launch. 26.2 NeoForge and the older loaders do not know `iconFile`, so they keep `logoFile`.
+
+## Store page and Reel
+
+- **Every image is the mod running.** Screenshots are unedited captures of the 1.21.1 Fabric dev client in one
+  staged world; the cards and banner are composed around them in HTML (`marketing/source/render.cjs`) with the mod's
+  own pixel art and two OFL fonts. Nothing is AI-generated or retouched.
+- **Action stills come from a slowed clock.** The Arc Storm's lightning lasts a few ticks; at normal speed the
+  software renderer rarely draws it. Running the game 10× slow and grabbing losslessly keeps every rendered frame, so
+  the exact frame can be picked (the same method as the Reel).
+- **Formations are a diagram, not a screenshot.** Seen from above on plain grass the four shapes did not read, so the
+  command card draws them from the slot offsets in `Formation.java`.
+- **The Reel follows the channel's standing rules**: the NightBeam channel voice (Chatterbox, four takes per line),
+  real recorded Mixkit sound effects, footage on a slowed clock with no repeated frames. See `marketing/reel/README.md`.
 
 ## Scope (cut from the bottom)
 

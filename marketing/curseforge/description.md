@@ -49,7 +49,8 @@ Classes are JSON files in `config/better_with_gold/classes/`: change their numbe
 
 - **Hold G** for the command wheel, point, let go: **Follow, Charge, Focus** (your crosshair target), **Hold, Fall
   back, Guard banner, Formation** and **Recall**.
-- **Four formations:** Line, Wedge, Shield Wall (tanks and melee in front) and Circle around you.
+- **Four formations** around you, or around your planted Warbanner: Line, Wedge, Shield Wall (tanks and melee in
+  front) and Circle.
 - **Party frames** in the corner show every ally's class, health and level, with a red countdown when one is down.
 
 ![Aggro & Taunts](https://raw.githubusercontent.com/MeherBenSalem/better_with_gold/main/marketing/images/header-aggro.png)
@@ -144,4 +145,10 @@ just the players who attack their leader.
 
 ![Gallery](https://raw.githubusercontent.com/MeherBenSalem/better_with_gold/main/marketing/images/header-gallery.png)
 
-See the gallery for screenshots of every class, the wheel, the roster and the Warbanner.
+![An Arc Storm lands on a pillager band at sunset](https://raw.githubusercontent.com/MeherBenSalem/better_with_gold/main/marketing/images/screenshots/battle-storm.png)
+
+![The warband: Mender, Arcanist, Bulwark, Skirmisher and Ranger](https://raw.githubusercontent.com/MeherBenSalem/better_with_gold/main/marketing/images/screenshots/warband.png)
+
+![The Bulwark's Challenge ring spreads out while the Skirmisher whirls](https://raw.githubusercontent.com/MeherBenSalem/better_with_gold/main/marketing/images/screenshots/challenge.png)
+
+More in the gallery: every class in action, hiring, the roster, downed and revived, the Warbanner.

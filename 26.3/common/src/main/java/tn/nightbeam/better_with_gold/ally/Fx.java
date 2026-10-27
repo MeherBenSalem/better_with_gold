@@ -212,20 +212,24 @@ public final class Fx {
 		});
 	}
 
-	/** Mender's Mend: a golden mote flies to the patient and a spiral of light rises around them. */
+	/**
+	 * Mender's Mend: a golden mote arcs to the patient leaving a trail of light, a halo flashes at its feet and a
+	 * triple spiral of light rises around it.
+	 */
 	public static void mend(ServerLevel level, AllyEntity mender, LivingEntity patient) {
 		Vec3 from = chest(mender).add(mender.getLookAngle().scale(0.3));
 		sound(level, from, "minecraft:block.amethyst_block.chime", 1.0F, 1.35F);
 		play(level, 18, t -> {
 			if (t < 6) {
 				Vec3 to = chest(patient);
-				double u = (t + 1) / 6.0;
-				Vec3 p = from.add(to.subtract(from).scale(u)).add(0, Math.sin(u * Math.PI) * 0.7, 0);
+				Vec3 p = mendArc(from, to, (t + 1) / 6.0);
+				line(level, mendArc(from, to, t / 6.0), p, Compat.dust(GOLD_PALE, 1.3F), 8);
 				at(level, ParticleTypes.END_ROD, p.x, p.y, p.z);
-				burst(level, Compat.dust(GOLD_PALE, 1.2F), p, 3, 0.06, 0);
 				if (t == 5) {
 					sound(level, to, "minecraft:entity.allay.item_given", 0.8F, 1.4F);
 					burst(level, ParticleTypes.HEART, to.add(0, 0.6, 0), 2, 0.3, 0);
+					burst(level, ParticleTypes.END_ROD, to, 6, 0.25, 0.04);
+					ring(level, patient.position().add(0, 0.1, 0), 0.75, Compat.dust(GOLD, 1.2F), 20, 0);
 				}
 				return;
 			}
@@ -234,14 +238,20 @@ public final class Fx {
 			}
 			int k = t - 6;
 			Vec3 c = patient.position();
-			for (int s = 0; s < 2; s++) {
-				double a = k * 0.7 + s * Math.PI;
-				at(level, Compat.dust(s == 0 ? GOLD : HEAL, 0.9F), c.x + Math.sin(a) * 0.55, c.y + 0.1 + k * 0.17, c.z + Math.cos(a) * 0.55);
+			int[] strands = {GOLD, HEAL, GOLD_PALE};
+			for (int s = 0; s < strands.length; s++) {
+				double a = k * 0.7 + s * 2 * Math.PI / strands.length;
+				at(level, Compat.dust(strands[s], 1.2F), c.x + Math.sin(a) * 0.6, c.y + 0.1 + k * 0.17, c.z + Math.cos(a) * 0.6);
 			}
 			if (k % 3 == 0) {
 				at(level, ParticleTypes.HAPPY_VILLAGER, c.x, c.y + 0.3 + k * 0.15, c.z);
 			}
 		});
+	}
+
+	/** A point on the Mend mote's path: a straight line from {@code from} to {@code to}, lifted into an arc. */
+	private static Vec3 mendArc(Vec3 from, Vec3 to, double u) {
+		return from.add(to.subtract(from).scale(u)).add(0, Math.sin(u * Math.PI) * 0.7, 0);
 	}
 
 	/** Arcanist's bolt: a jagged arcane arc and a crackle on impact. */
