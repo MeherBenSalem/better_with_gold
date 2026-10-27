@@ -68,7 +68,8 @@ PROPS
       mkdir -p "$(dirname "$opts")"
       printf 'onboardAccessibility:false\nskipMultiplayerWarning:true\njoinedFirstServer:true\ntutorialStep:none\npauseOnLostFocus:false\nsoundCategory_master:0.0\nrenderDistance:8\n' > "$opts"
     fi
-    # 26.3+ windows through SDL3, which only finds a usable visual on Xvfb through EGL.
+    # 26.3+ windows through SDL3, which only finds a usable visual on Xvfb through EGL (Debian/Ubuntu packages
+    # libegl1 and libegl-mesa0; without them the client stops with "Could not load EGL library").
     export DISPLAY=${DISPLAY:-:1} LIBGL_ALWAYS_SOFTWARE=1 GALLIUM_DRIVER=llvmpipe SDL_VIDEO_FORCE_EGL=1 ${QA_CLIENT_ENV:-}
     cd "$ROOT/$2" && nohup ./gradlew ":$3:runQaClient" --no-daemon > "$LOGS/$3-client.log" 2>&1 &
     ;;

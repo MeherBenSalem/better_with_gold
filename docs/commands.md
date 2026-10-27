@@ -23,7 +23,7 @@ need permission level 2 (operators, cheats on).
 
 | Command | What it does |
 |---|---|
-| `/fellowship recruit <class> [level]` | Adds a new ally of that class to your warband |
+| `/fellowship recruit <class> [level]` | Adds a new ally of that class to your warband (ignores `partySize`, for testing and events) |
 | `/fellowship sellsword [class] [level]` | Without a class: places a sellsword at the nearest village bell, as natural spawning would. With a class: places one for hire in front of you |
 | `/fellowship setlevel <level>` | Sets the level of the ally you look at (or the nearest of yours) |
 | `/fellowship reload` | Reloads `fellowship.json` and the class files |

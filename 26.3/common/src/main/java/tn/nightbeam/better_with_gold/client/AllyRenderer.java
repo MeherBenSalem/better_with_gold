@@ -7,12 +7,11 @@ import tn.nightbeam.better_with_gold.compat.Compat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.HumanoidModel;
 import net.minecraft.client.model.geom.ModelLayers;
-import net.minecraft.client.model.player.PlayerModel;
 import net.minecraft.client.renderer.entity.ArmorModelSet;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.HumanoidMobRenderer;
 import net.minecraft.client.renderer.entity.layers.HumanoidArmorLayer;
-import net.minecraft.client.renderer.entity.state.AvatarRenderState;
+import net.minecraft.client.renderer.entity.state.HumanoidRenderState;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.item.Items;
@@ -20,36 +19,38 @@ import net.minecraft.world.item.Items;
 import java.util.HashMap;
 import java.util.Map;
 
-/** Allies use the player model with a skin per class and variant, plus worn armour. Minecraft 26.3 edition. */
-public class AllyRenderer extends HumanoidMobRenderer<AllyEntity, AvatarRenderState, PlayerModel> {
+/**
+ * Allies use the player's shape with a skin per class and variant, plus worn armour. The render state is a plain
+ * humanoid one: 26.3 sends every avatar (player) render state to the player renderer, which would draw the
+ * default skin. Minecraft 26.3 edition.
+ */
+public class AllyRenderer extends HumanoidMobRenderer<AllyEntity, AllyRenderer.State, HumanoidModel<AllyRenderer.State>> {
 	private static final Map<String, Identifier> TEXTURES = new HashMap<>();
 
-	public static class State extends AvatarRenderState {
+	public static class State extends HumanoidRenderState {
 		public Identifier texture;
 	}
 
 	public AllyRenderer(EntityRendererProvider.Context context) {
-		super(context, new PlayerModel(context.bakeLayer(ModelLayers.PLAYER), false), 0.5F);
-		addLayer(new HumanoidArmorLayer<>(this, ArmorModelSet.bake(ModelLayers.PLAYER_ARMOR, context.getModelSet(), part -> new PlayerModel(part, false)),
+		super(context, new HumanoidModel<>(context.bakeLayer(ModelLayers.PLAYER)), 0.5F);
+		addLayer(new HumanoidArmorLayer<>(this, ArmorModelSet.bake(ModelLayers.PLAYER_ARMOR, context.getModelSet(), HumanoidModel<State>::new),
 				context.getEquipmentRenderer()));
 	}
 
 	@Override
-	public AvatarRenderState createRenderState() {
+	public State createRenderState() {
 		return new State();
 	}
 
 	@Override
-	public void extractRenderState(AllyEntity entity, AvatarRenderState state, float partialTicks) {
+	public void extractRenderState(AllyEntity entity, State state, float partialTicks) {
 		super.extractRenderState(entity, state, partialTicks);
-		if (state instanceof State s) {
-			s.texture = texture(entity.classId(), entity.variant());
-		}
+		state.texture = texture(entity.classId(), entity.variant());
 	}
 
 	@Override
-	public Identifier getTextureLocation(AvatarRenderState state) {
-		return state instanceof State s && s.texture != null ? s.texture : texture("bulwark", 0);
+	public Identifier getTextureLocation(State state) {
+		return state.texture != null ? state.texture : texture("bulwark", 0);
 	}
 
 	@Override

@@ -64,8 +64,12 @@ def main():
     as_player(s, 'fellowship formation wedge')
     as_player(s, 'fellowship order follow')
     s.cmd(f'tp {PLAYER} 0 -60 12 0 10')
-    time.sleep(6)
-    near = ally_count(s, ',distance=..8')
+    near = 0
+    for _ in range(12):
+        time.sleep(1)
+        near = ally_count(s, ',distance=..8')
+        if near >= 4:
+            break
     s.tp(0, -60, 12, yaw=180, pitch=15)
     time.sleep(1)
     s.hud(True)
@@ -92,21 +96,30 @@ def main():
     check('warband kills the zombies', zombies == 0, f'{zombies} left')
 
     # Downed and revived.
-    s.cmd('effect clear @e[type=better_with_gold:ally]')
-    out = s.cmd('damage @e[type=better_with_gold:ally,limit=1,sort=nearest] 500 minecraft:mob_attack')
+    # Down one ally (tagged, so the revive check reads the same one) and keep the Mender away so the player revives.
+    s.cmd('effect clear @e[type=better_with_gold:ally]', 'tag @e[type=better_with_gold:ally] remove qa_downed', 'tag @e[type=better_with_gold:ally] remove qa_skip')
+    as_player(s, 'fellowship order hold')
+    for _ in range(5):
+        record = s.cmd(f'execute as {PLAYER} at {PLAYER} run data get entity @e[type=better_with_gold:ally,limit=1,sort=nearest,tag=!qa_skip] Fellowship')
+        target = '@e[type=better_with_gold:ally,limit=1,sort=nearest,tag=!qa_skip]'
+        s.cmd(f'execute at {PLAYER} run tag {target} add ' + ('qa_skip' if '\\"classId\\":\\"mender\\"' in record or '"classId":"mender"' in record else 'qa_downed'))
+        if count(s, '@e[tag=qa_downed]'):
+            break
+    s.cmd('damage @e[tag=qa_downed,limit=1] 500 minecraft:mob_attack')
     time.sleep(1)
-    downed = s.cmd('data get entity @e[type=better_with_gold:ally,limit=1,sort=nearest] FellowshipDowned')
+    downed = s.cmd('data get entity @e[tag=qa_downed,limit=1] FellowshipDowned')
     check('ally is downed instead of killed', ally_count(s) == 5 and 'has the following entity data: 0' not in downed, downed.strip())
     s.shot(shots / 'downed.png')
-    # Walk to the nearest ally and crouch to revive.
-    s.cmd(f'execute as {PLAYER} at @e[type=better_with_gold:ally,limit=1,sort=nearest] run tp {PLAYER} ~1 ~ ~')
+    # Walk to the downed ally and crouch to revive.
+    s.cmd(f'execute as {PLAYER} at @e[tag=qa_downed,limit=1] run tp {PLAYER} ~1 ~ ~')
     s.focus()
     s.xdo('keydown', 'shift')
     time.sleep(4.5)
     s.xdo('keyup', 'shift')
     time.sleep(1)
-    after = s.cmd('data get entity @e[type=better_with_gold:ally,limit=1,sort=nearest] FellowshipDowned')
+    after = s.cmd('data get entity @e[tag=qa_downed,limit=1] FellowshipDowned')
     check('crouching revives the ally', after.strip().endswith(': 0'), after.strip())
+    as_player(s, 'fellowship order follow')
 
     # Roster screen and command wheel.
     s.key('u')
