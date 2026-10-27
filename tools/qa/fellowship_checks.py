@@ -81,7 +81,9 @@ def main():
     for i in range(4):
         s.cmd(f'summon minecraft:zombie {6 + i} -60 26 {{PersistenceRequired:1b}}')
     seen_labels = 0
-    for _ in range(10):
+    # The zombies start about 15 blocks out; a label appears once an ally has hit one (or been hit), which on a slow
+    # software-rendered run can take most of 10 seconds.
+    for _ in range(25):
         time.sleep(0.6)
         seen_labels = max(seen_labels, count(s, '@e[type=better_with_gold:aggro_label]'))
         if seen_labels:

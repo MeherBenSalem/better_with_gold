@@ -36,8 +36,8 @@ const classes = [
 ];
 
 const css = `
-@font-face { font-family: RsSerif; src: url('${url(path.join(fonts, 'eb-garamond.ttf'))}'); }
-@font-face { font-family: RsDisplay; src: url('${url(path.join(fonts, 'cinzel.ttf'))}'); }
+@font-face { font-family: RsSerif; src: url('${url(path.join(fonts, 'eb-garamond.ttf'))}'); font-weight: 400 800; }
+@font-face { font-family: RsDisplay; src: url('${url(path.join(fonts, 'cinzel.ttf'))}'); font-weight: 400 900; }
 :root { --text:#dcd8e6; --dim:#9894a8; --header:#efe9d8; --gold:#e8c872; --gold-hi:#f6dc94; --bg:#07080f; --line:rgba(232,200,114,.35); }
 * { box-sizing: border-box; }
 html, body { margin: 0; background: var(--bg); color: var(--text); font-family: RsSerif, serif; }
