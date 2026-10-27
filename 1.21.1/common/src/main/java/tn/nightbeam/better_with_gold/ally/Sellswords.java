@@ -71,7 +71,7 @@ public final class Sellswords {
 		}
 		BlockPos bell = centre.get();
 		List<AllyEntity> waiting = level.getEntitiesOfClass(AllyEntity.class, new AABB(bell).inflate(64), a -> !a.isHired());
-		if (waiting.size() >= cfg.maxSellswordsNearVillage || level.getEntitiesOfClass(AllyEntity.class, new AABB(bell).inflate(160)).size() >= cfg.worldAllyCap) {
+		if (waiting.size() >= cfg.maxSellswordsNearVillage || Warbands.liveCount() + waiting.size() >= cfg.worldAllyCap) {
 			return null;
 		}
 		for (int attempt = 0; attempt < 12; attempt++) {

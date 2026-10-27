@@ -384,7 +384,7 @@ public class AllyEntity extends PathfinderMob implements OwnableEntity {
 				continue;
 			}
 			if (Fellowship.isFriendly(this, player)) {
-				addRevive(1.0F / (FellowshipConfig.INSTANCE.reviveSeconds * 20.0F), player.getGameProfile().getName(), null);
+				addRevive(1.0F / (FellowshipConfig.INSTANCE.reviveSeconds * 20.0F), Compat.playerName(player), null);
 				helped = true;
 				if (!isDowned()) {
 					return;

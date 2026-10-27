@@ -90,15 +90,14 @@ public class AllyTargetGoal extends Goal {
 	/** Whatever is hurting the leader or the band right now. */
 	private LivingEntity urgent() {
 		ServerPlayer owner = ally.owner();
-		int now = ally.tickCount;
 		if (owner != null && owner.level() == ally.level()) {
 			LivingEntity e = owner.getLastHurtByMob();
-			if (e != null && owner.tickCount - owner.getLastHurtByMobTimestamp() < 100 && valid(e)) {
+			if (e != null && Compat.recentlyHurtBy(owner) && valid(e)) {
 				return e;
 			}
 		}
 		LivingEntity mine = ally.getLastHurtByMob();
-		if (mine != null && now - ally.getLastHurtByMobTimestamp() < 100 && valid(mine)) {
+		if (mine != null && Compat.recentlyHurtBy(ally) && valid(mine)) {
 			return mine;
 		}
 		for (AllyEntity mate : Warbands.liveAllies(ally)) {
@@ -106,13 +105,13 @@ public class AllyTargetGoal extends Goal {
 				continue;
 			}
 			LivingEntity e = mate.getLastHurtByMob();
-			if (e != null && mate.tickCount - mate.getLastHurtByMobTimestamp() < 100 && valid(e)) {
+			if (e != null && Compat.recentlyHurtBy(mate) && valid(e)) {
 				return e;
 			}
 		}
 		if (owner != null && owner.level() == ally.level()) {
 			LivingEntity e = owner.getLastHurtMob();
-			if (e != null && owner.tickCount - owner.getLastHurtMobTimestamp() < 100 && valid(e)) {
+			if (e != null && Compat.recentlyHurt(owner) && valid(e)) {
 				return e;
 			}
 		}

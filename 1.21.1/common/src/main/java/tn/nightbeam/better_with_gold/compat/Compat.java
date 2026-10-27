@@ -355,6 +355,33 @@ public final class Compat {
 		entity.teleportTo(x, y, z);
 	}
 
+	public static String playerName(Player player) {
+		return player.getGameProfile().getName();
+	}
+
+	/** The owner of a tamed or owned entity, or null. */
+	public static java.util.UUID ownerOf(Entity entity) {
+		return entity instanceof net.minecraft.world.entity.OwnableEntity ownable ? ownable.getOwnerUUID() : null;
+	}
+
+	public static boolean isVillagerOrGolem(Entity entity) {
+		return entity instanceof net.minecraft.world.entity.npc.Npc || entity instanceof net.minecraft.world.entity.animal.AbstractGolem;
+	}
+
+	public static void ride(Entity passenger, Entity vehicle) {
+		passenger.startRiding(vehicle, true);
+	}
+
+	/** Hurt by a living attacker within the last five seconds. */
+	public static boolean recentlyHurtBy(LivingEntity entity) {
+		return entity.tickCount - entity.getLastHurtByMobTimestamp() < 100;
+	}
+
+	/** Hurt something within the last five seconds. */
+	public static boolean recentlyHurt(LivingEntity entity) {
+		return entity.tickCount - entity.getLastHurtMobTimestamp() < 100;
+	}
+
 	public static long gameTime(Level level) {
 		return level.getGameTime();
 	}

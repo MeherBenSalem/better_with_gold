@@ -143,7 +143,7 @@ public final class AllyCombat {
 		Compat.playSound(level, best.getX(), best.getY(), best.getZ(), "minecraft:block.amethyst_block.chime", 1.0F, 1.3F);
 		ally.swing(net.minecraft.world.InteractionHand.MAIN_HAND);
 		if (best == owner && before <= 6 && Warbands.mayRecordSave(ally)) {
-			ally.chronicle(Chronicle.Type.SAVED_LEADER, owner.getGameProfile().getName(), "", Math.max(1, (int) Math.ceil(before / 2)));
+			ally.chronicle(Chronicle.Type.SAVED_LEADER, Compat.playerName(owner), "", Math.max(1, (int) Math.ceil(before / 2)));
 		}
 		return true;
 	}

@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.0.0
+
+Better With Gold becomes **Remnants | Fellowship**: sellswords, five classes, the command wheel, formations, the
+Warbanner, aggro and taunts, downed-not-dead revives, the roster and Chronicle, party frames, and travel-safe
+allies. The gold items stay and their recipes are restored. Full notes: [patchnotes/2.0.0.md](patchnotes/2.0.0.md).
+
 ## 1.2.3
 
 - Assign registry IDs before constructing items on Minecraft 26.2 and 26.3, fixing the Fabric `Item id not set` startup crash.

@@ -146,14 +146,15 @@ jobs:
 
           (async () => {
             const parsed = jars.map(parseJar);
-            const changelog = `Release ${version}`;
+            const notes = path.join('patchnotes', `${version}.md`);
+            const changelog = fs.existsSync(notes) ? fs.readFileSync(notes, 'utf8') : `Release ${version}`;
 
             for (const parsedJar of parsed) {
               const body = {
-                name: `${version} · ${parsedJar.loader} · ${parsedJar.game}`,
+                name: `Remnants | Fellowship ${version} · ${parsedJar.loader} · ${parsedJar.game}`,
                 version_number: `${version}+${parsedJar.loader}-${parsedJar.game}`,
                 changelog,
-                dependencies: [],
+                dependencies: parsedJar.loader === 'fabric' ? [{ project_id: 'P7dR8mSH', dependency_type: 'required' }] : [],
                 game_versions: [parsedJar.game],
                 version_type: 'release',
                 loaders: [parsedJar.loader],
@@ -194,9 +195,10 @@ jobs:
               const meta = {
                 changelog,
                 changelogType: 'markdown',
-                displayName: `${version} · ${parsedJar.loader} · ${parsedJar.game}`,
+                displayName: `Remnants | Fellowship ${version} · ${parsedJar.loader} · ${parsedJar.game}`,
                 gameVersions: [clientId, serverId, loaderId, gameHit.id],
                 releaseType: 'release',
+                ...(parsedJar.loader === 'fabric' ? { relations: { projects: [{ slug: 'fabric-api', type: 'requiredDependency' }] } } : {}),
               };
               const cfForm = new FormData();
               cfForm.append('metadata', JSON.stringify(meta));

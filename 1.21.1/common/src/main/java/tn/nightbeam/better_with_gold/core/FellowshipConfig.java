@@ -18,8 +18,9 @@ public final class FellowshipConfig {
 
 	/** Allies one leader can have at once (hired and stowed together). */
 	public int partySize = 6;
-	/** Allies of every leader together that can be loaded in a world at once. */
+	/** Most allies of all leaders together that can be loaded at once; hiring and sellswords stop there. */
 	public int worldAllyCap = 200;
+	/** The highest level an ally can reach. */
 	public int levelCap = 20;
 	/** Seconds a downed ally lasts before it bleeds out. */
 	public int bleedOutSeconds = 30;
@@ -32,13 +33,17 @@ public final class FellowshipConfig {
 	/** Seconds a bled-out ally rests at camp before it can be summoned again (permadeath off). */
 	public int recoverySeconds = 300;
 
+	/** Sellswords for hire turn up near village bells. */
 	public boolean sellswordsSpawn = true;
 	/** How often, per player, the game tries to place a sellsword near a village. */
 	public int sellswordIntervalSeconds = 180;
+	/** Chance (0 to 1) that each try places a sellsword. */
 	public double sellswordChance = 0.5;
+	/** Most sellswords that wait at one village at a time. */
 	public int maxSellswordsNearVillage = 3;
 	/** Minutes an unhired sellsword waits before moving on. */
 	public int sellswordStayMinutes = 40;
+	/** Multiplies every hiring price. */
 	public double priceMultiplier = 1.0;
 	/** The item that pays for hiring. */
 	public String currency = "minecraft:gold_ingot";
@@ -59,6 +64,7 @@ public final class FellowshipConfig {
 	public int regaliaMoraleFloorPerPiece = 5;
 	/** With RPG Attribute System installed, allies cannot out-level the leader's RPG level (at least this). */
 	public int rpgLevelCapFloor = 5;
+	/** Turns the RPG Attribute System level cap on or off. */
 	public boolean rpgLevelCap = true;
 
 	public FellowshipConfig sanitize() {

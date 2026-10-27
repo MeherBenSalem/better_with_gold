@@ -242,7 +242,7 @@ public final class Threat {
 			}
 			Compat.moveTo(label, mob.getX(), mob.getY() + mob.getBbHeight(), mob.getZ(), 0);
 			e.level.addFreshEntity(label);
-			label.startRiding(mob, true);
+			Compat.ride(label, mob);
 			e.label = label;
 			e.text = "";
 		}

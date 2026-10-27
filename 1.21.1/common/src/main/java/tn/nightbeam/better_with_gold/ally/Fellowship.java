@@ -18,10 +18,7 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.OwnableEntity;
-import net.minecraft.world.entity.animal.AbstractGolem;
 import net.minecraft.world.entity.monster.Enemy;
-import net.minecraft.world.entity.npc.Npc;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
@@ -105,10 +102,10 @@ public final class Fellowship {
 			}
 			return !FellowshipConfig.INSTANCE.allowPvp;
 		}
-		if (other instanceof OwnableEntity pet && owner != null && owner.equals(pet.getOwnerUUID())) {
+		if (owner != null && owner.equals(Compat.ownerOf(other))) {
 			return true;
 		}
-		return other instanceof Npc || other instanceof AbstractGolem;
+		return Compat.isVillagerOrGolem(other);
 	}
 
 	/** Whether the ally ignores this hit: friends cannot hurt allies unless friendly fire is on for the leader. */

@@ -212,6 +212,15 @@ public final class Warbands {
 		return owner == null ? List.of() : liveAllies(owner);
 	}
 
+	/** Hired allies loaded right now, across every leader. */
+	public static int liveCount() {
+		int n = 0;
+		for (Map<UUID, AllyEntity> band : LIVE.values()) {
+			n += band.size();
+		}
+		return n;
+	}
+
 	public static boolean leadsLiveBand(UUID player) {
 		return !liveAllies(player).isEmpty();
 	}
@@ -321,9 +330,9 @@ public final class Warbands {
 	private static void swear(AllyEntity ally, ServerPlayer owner) {
 		AllyRecord r = ally.record();
 		WarbandState s = state(owner.getUUID());
-		s.ownerName = owner.getGameProfile().getName();
+		s.ownerName = Compat.playerName(owner);
 		r.owner = owner.getUUID().toString();
-		r.ownerName = owner.getGameProfile().getName();
+		r.ownerName = Compat.playerName(owner);
 		r.swornDay = Compat.day(owner.level());
 		r.leaveAt = 0;
 		r.order = s.orderValue() == Order.FOCUS ? Order.FOLLOW.id() : s.order;
@@ -369,6 +378,10 @@ public final class Warbands {
 		WarbandState s = state(player.getUUID());
 		if (s.rosterSize() >= cfg.partySize) {
 			Compat.message(player, Component.literal("Your warband is full (" + s.rosterSize() + "/" + cfg.partySize + "). Dismiss someone first.").withStyle(ChatFormatting.RED), true);
+			return false;
+		}
+		if (liveCount() >= cfg.worldAllyCap) {
+			Compat.message(player, Component.literal("This world already has " + cfg.worldAllyCap + " allies in service.").withStyle(ChatFormatting.RED), true);
 			return false;
 		}
 		int price = price(ally);
@@ -625,7 +638,7 @@ public final class Warbands {
 		ServerLevel level = Compat.level(owner);
 		Entity e = Compat.loadEntity(stowed.entity, level);
 		if (!(e instanceof AllyEntity ally)) {
-			Constants.LOG.warn("Could not restore an ally from camp for {}", owner.getGameProfile().getName());
+			Constants.LOG.warn("Could not restore an ally from camp for {}", Compat.playerName(owner));
 			return null;
 		}
 		if (level.getEntity(ally.getUUID()) != null) {
@@ -918,7 +931,7 @@ public final class Warbands {
 
 	public static void join(ServerPlayer player) {
 		WarbandState s = state(player.getUUID());
-		s.ownerName = player.getGameProfile().getName();
+		s.ownerName = Compat.playerName(player);
 		PENDING.add(new Pending(player.getUUID(), Compat.gameTime(player.level()) + 30));
 	}
 
