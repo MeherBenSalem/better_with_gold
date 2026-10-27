@@ -31,6 +31,9 @@ public final class NeoForgeModTabs {
 	}
 
 	private static void buildTabContents(BuildCreativeModeTabContentsEvent event) {
+		if (event.getTabKey() == ModCreativeTabs.FELLOWSHIP_KEY) {
+			ModCreativeTabs.addFellowshipItems(stack -> event.accept(stack));
+		}
 		if (event.getTabKey() == ModCreativeTabs.TAB_KEY) {
 			ModCreativeTabs.addItems(stack -> event.accept(stack));
 		}

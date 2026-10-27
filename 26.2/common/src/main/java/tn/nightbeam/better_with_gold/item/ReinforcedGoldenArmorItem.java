@@ -7,6 +7,12 @@ import net.minecraft.world.item.equipment.EquipmentAssets;
 import net.minecraft.resources.Identifier;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.world.item.equipment.ArmorType;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.component.TooltipDisplay;
+
+import java.util.function.Consumer;
 
 public abstract class ReinforcedGoldenArmorItem extends Item {
 
@@ -18,6 +24,12 @@ public abstract class ReinforcedGoldenArmorItem extends Item {
 
 	protected ReinforcedGoldenArmorItem(Item.Properties properties, ArmorType type) {
 		super(properties.humanoidArmor(REINFORCED, type));
+	}
+
+	@Override
+	public void appendHoverText(ItemStack stack, TooltipContext context, TooltipDisplay display, Consumer<Component> tooltip, TooltipFlag flag) {
+		super.appendHoverText(stack, context, display, tooltip, flag);
+		tooltip.accept(Component.translatable("item.better_with_gold.reinforced_golden_armor_helmet.description_0"));
 	}
 
 	public static class Helmet extends ReinforcedGoldenArmorItem {

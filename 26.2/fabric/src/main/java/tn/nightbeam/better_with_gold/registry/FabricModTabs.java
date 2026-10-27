@@ -13,6 +13,7 @@ public final class FabricModTabs {
 	public static void register() {
 		ModCreativeTabs.register((id, factory) -> Registry.register(BuiltInRegistries.CREATIVE_MODE_TAB, id, factory.get()));
 
+		CreativeModeTabEvents.modifyOutputEvent(ModCreativeTabs.FELLOWSHIP_KEY).register(output -> ModCreativeTabs.addFellowshipItems(output::accept));
 		CreativeModeTabEvents.modifyOutputEvent(ModCreativeTabs.TAB_KEY).register(output -> ModCreativeTabs.addItems(output::accept));
 		CreativeModeTabEvents.modifyOutputEvent(CreativeModeTabs.TOOLS_AND_UTILITIES).register(output -> output.accept(ModItems.UPGRADE_TEMPLATE));
 	}
