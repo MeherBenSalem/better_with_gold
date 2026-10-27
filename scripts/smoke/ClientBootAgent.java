@@ -25,10 +25,11 @@ public final class ClientBootAgent {
                 Class<?> minecraft = null;
                 Class<?> items = null;
                 Class<?> entities = null;
+                java.util.List<Class<?>> minecrafts = new java.util.ArrayList<>();
                 for (Class<?> type : instrumentation.getAllLoadedClasses()) {
                     if (type.getName().equals("net.minecraft.client.Minecraft")
                             || type.getName().equals("net.minecraft.class_310")) {
-                        minecraft = type;
+                        minecrafts.add(type);
                     }
                     if (type.getName().equals("tn.nightbeam.better_with_gold.registry.ModItems")) {
                         items = type;
@@ -37,17 +38,28 @@ public final class ClientBootAgent {
                         entities = type;
                     }
                 }
-                if (minecraft == null || items == null) continue;
+                if (minecrafts.isEmpty() || items == null) continue;
+                // Minecraft.getInstance() by name (official, Fabric intermediary, Forge SRG). Forge can load the class
+                // more than once in different class loaders; the live client is the copy whose instance is set.
+                for (Class<?> candidate : minecrafts) {
+                    for (String name : new String[]{"getInstance", "method_1551", "m_91087_"}) {
+                        try {
+                            Method method = candidate.getMethod(name);
+                            if (Modifier.isStatic(method.getModifiers()) && method.getReturnType() == candidate) {
+                                Object instance = method.invoke(null);
+                                if (instance != null) {
+                                    client = instance;
+                                    minecraft = candidate;
+                                }
+                                break;
+                            }
+                        } catch (NoSuchMethodException ignored) { }
+                    }
+                    if (client != null) break;
+                }
+                if (minecraft == null) continue;
                 // Forge's event transformer uses the current thread's context loader.
                 Thread.currentThread().setContextClassLoader(minecraft.getClassLoader());
-                for (Method method : minecraft.getDeclaredMethods()) {
-                    if (Modifier.isStatic(method.getModifiers()) && method.getParameterCount() == 0
-                            && method.getReturnType() == minecraft) {
-                        method.setAccessible(true);
-                        client = method.invoke(null);
-                        break;
-                    }
-                }
                 if (client == null || items == null) continue;
                 Object gui = client;
                 boolean screenOnClient = false;
@@ -159,7 +171,9 @@ public final class ClientBootAgent {
             registryInterface = Class.forName("net.minecraft.class_2378", false, loader);
         }
         for (Field registryField : registries.getDeclaredFields()) {
-            if (!Modifier.isStatic(registryField.getModifiers()) || !registryInterface.isAssignableFrom(registryField.getType())) continue;
+            // The public registries only: BuiltInRegistries also holds a private registry of registries.
+            int modifiers = registryField.getModifiers();
+            if (!Modifier.isStatic(modifiers) || !Modifier.isPublic(modifiers) || !registryInterface.isAssignableFrom(registryField.getType())) continue;
             Object registry = registryField.get(null);
             for (Method method : registryInterface.getMethods()) {
                 String returnType = method.getReturnType().getName();

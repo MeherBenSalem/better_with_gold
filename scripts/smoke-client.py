@@ -145,7 +145,13 @@ def run_case(workspace, loader, args, agent, releases, dependencies):
     print(f"BOOT {case} jar={jar.name}", flush=True)
     start = time.monotonic()
     with (game / ("inspection.log" if args.inspect else "launcher.log")).open("w", encoding="utf-8") as log:
-        process = subprocess.Popen([str(java), "@" + str(argument_file)], cwd=game, stdout=log, stderr=subprocess.STDOUT,
+        environment = dict(os.environ)
+        if not WINDOWS:
+            # Software GL on a virtual display (Xvfb). 26.3 NeoForge's early window finds no GLX visual there and
+            # SDL3 needs EGL, as in tools/qa/devrun.sh. Values already set are kept.
+            for key, value in (("LIBGL_ALWAYS_SOFTWARE", "1"), ("GALLIUM_DRIVER", "llvmpipe"), ("SDL_VIDEO_FORCE_EGL", "1")):
+                environment.setdefault(key, value)
+        process = subprocess.Popen([str(java), "@" + str(argument_file)], cwd=game, stdout=log, stderr=subprocess.STDOUT, env=environment,
                                    **({"creationflags": subprocess.CREATE_NO_WINDOW} if WINDOWS else {}))
         if args.inspect:
             print(f"Inspection client open: PID {process.pid}; game directory {game}", flush=True)
