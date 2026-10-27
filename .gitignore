@@ -11,5 +11,4 @@ out
 .idea
 .vscode
 .release-upload-state.json
-tools/
 __pycache__/
