@@ -24,6 +24,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LightningBolt;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -270,6 +271,16 @@ public final class Compat {
 
 	public static <T extends Entity> T create(EntityType<T> type, ServerLevel level) {
 		return type.create(level);
+	}
+
+	/** Swings the given hand (attack, cast or revive animation). */
+	public static void swing(Mob mob, InteractionHand hand) {
+		mob.swing(hand);
+	}
+
+	/** Puts a stack back in the player's inventory, dropping it at their feet when it is full. */
+	public static void giveBack(Player player, ItemStack stack) {
+		player.getInventory().placeItemBackInInventory(stack);
 	}
 
 	public static void moveTo(Entity entity, double x, double y, double z, float yaw) {

@@ -11,7 +11,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.projectile.AbstractArrow;
+import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
 
@@ -83,7 +83,7 @@ public final class AllyCombat {
 		ring(level, ally.position(), c.abilityRadius * 0.3, ParticleTypes.CRIT, 16);
 		Compat.playSound(level, ally.getX(), ally.getY(), ally.getZ(), "minecraft:entity.ravager.roar", 0.5F, 1.5F);
 		Compat.playSound(level, ally.getX(), ally.getY(), ally.getZ(), "minecraft:item.shield.block", 0.9F, 0.8F);
-		ally.swing(net.minecraft.world.InteractionHand.OFF_HAND);
+		Compat.swing(ally, net.minecraft.world.InteractionHand.OFF_HAND);
 		return true;
 	}
 
@@ -99,7 +99,7 @@ public final class AllyCombat {
 		}
 		ring(level, ally.position().add(0, 0.8, 0), c.abilityRadius * 0.8, ParticleTypes.SWEEP_ATTACK, 8);
 		Compat.playSound(level, ally.getX(), ally.getY(), ally.getZ(), "minecraft:entity.player.attack.sweep", 1.0F, 0.9F);
-		ally.swing(net.minecraft.world.InteractionHand.MAIN_HAND);
+		Compat.swing(ally, net.minecraft.world.InteractionHand.MAIN_HAND);
 		ally.markCombat();
 		return true;
 	}
@@ -141,7 +141,7 @@ public final class AllyCombat {
 		beam(level, ally.position().add(0, 1.2, 0), best.position().add(0, best.getBbHeight() * 0.6, 0), Compat.dust(0xF2C94C, 1.0F));
 		level.sendParticles(ParticleTypes.HEART, best.getX(), best.getY() + best.getBbHeight() + 0.2, best.getZ(), 3, 0.3, 0.2, 0.3, 0);
 		Compat.playSound(level, best.getX(), best.getY(), best.getZ(), "minecraft:block.amethyst_block.chime", 1.0F, 1.3F);
-		ally.swing(net.minecraft.world.InteractionHand.MAIN_HAND);
+		Compat.swing(ally, net.minecraft.world.InteractionHand.MAIN_HAND);
 		if (best == owner && before <= 6 && Warbands.mayRecordSave(ally)) {
 			ally.chronicle(Chronicle.Type.SAVED_LEADER, Compat.playerName(owner), "", Math.max(1, (int) Math.ceil(before / 2)));
 		}
@@ -157,7 +157,7 @@ public final class AllyCombat {
 		float damage = ally.rangedDamage();
 		boolean keen = ally.record().has(Trait.KEEN);
 		for (int i = 0; i < arrows; i++) {
-			AbstractArrow arrow = Compat.arrow(ally, bow, damage);
+			Projectile arrow = Compat.arrow(ally, bow, damage);
 			double dx = target.getX() - ally.getX();
 			double dy = target.getY(0.3333) - arrow.getY();
 			double dz = target.getZ() - ally.getZ();
@@ -189,7 +189,7 @@ public final class AllyCombat {
 		level.sendParticles(ParticleTypes.WITCH, to.x, to.y, to.z, 8, 0.2, 0.2, 0.2, 0.05);
 		Compat.hurt(target, Compat.magic(ally), damage);
 		Compat.playSound(level, ally.getX(), ally.getY(), ally.getZ(), "minecraft:entity.evoker.cast_spell", 0.7F, 1.7F);
-		ally.swing(net.minecraft.world.InteractionHand.MAIN_HAND);
+		Compat.swing(ally, net.minecraft.world.InteractionHand.MAIN_HAND);
 		ally.markCombat();
 	}
 

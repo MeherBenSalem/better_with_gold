@@ -18,22 +18,41 @@ public final class ModCreativeTabs {
 			Identifier.fromNamespaceAndPath(Constants.MOD_ID, "better_with_gold")
 	);
 
+	public static final ResourceKey<CreativeModeTab> FELLOWSHIP_KEY = ResourceKey.create(
+			Registries.CREATIVE_MODE_TAB,
+			Identifier.fromNamespaceAndPath(Constants.MOD_ID, "fellowship")
+	);
+
+	public static CreativeModeTab FELLOWSHIP;
 	public static CreativeModeTab BETTER_WITH_GOLD;
 
 	private ModCreativeTabs() {
 	}
 
 	public static void register(CreativeTabRegistrar registrar) {
+		FELLOWSHIP = registrar.register(
+				Identifier.fromNamespaceAndPath(Constants.MOD_ID, "fellowship"),
+				() -> CreativeModeTab.builder(CreativeModeTab.Row.TOP, 0)
+						.title(Component.translatable("item_group.better_with_gold.fellowship"))
+						.icon(() -> new ItemStack(ModItems.WARBANNER))
+						.build()
+		);
 		BETTER_WITH_GOLD = registrar.register(
 				Identifier.fromNamespaceAndPath(Constants.MOD_ID, "better_with_gold"),
 				() -> CreativeModeTab.builder(CreativeModeTab.Row.TOP, 0)
 						.title(Component.translatable("item_group.better_with_gold.better_with_gold"))
-						.icon(() -> new ItemStack(ModItems.REINFORCED_GOLDEN_PICK_AXE))
+						.icon(() -> new ItemStack(ModItems.REINFORCED_GOLDEN_ARMOR_CHESTPLATE))
 						.build()
 		);
 	}
 
+	public static void addFellowshipItems(Consumer<ItemStack> output) {
+		output.accept(new ItemStack(ModItems.WARBANNER));
+		output.accept(new ItemStack(ModItems.GOLDEN_FISH));
+	}
+
 	public static void addItems(Consumer<ItemStack> output) {
+		output.accept(new ItemStack(ModItems.UPGRADE_TEMPLATE));
 		output.accept(new ItemStack(ModItems.REINFORCED_GOLDEN_PICK_AXE));
 		output.accept(new ItemStack(ModItems.REINFORCED_GOLDEN_AXE));
 		output.accept(new ItemStack(ModItems.REINFORCED_GOLDEN_SHOVEL));

@@ -35,7 +35,7 @@ public class ThreatLabelEntity extends Entity {
 	@Override
 	public void tick() {
 		super.tick();
-		if (!level().isClientSide && (!isPassenger() || !Threat.ownsLabel(this))) {
+		if (!level().isClientSide() && (!isPassenger() || !Threat.ownsLabel(this))) {
 			discard();
 		}
 	}

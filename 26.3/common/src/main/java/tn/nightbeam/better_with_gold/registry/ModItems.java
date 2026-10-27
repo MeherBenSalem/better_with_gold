@@ -15,6 +15,7 @@ import tn.nightbeam.better_with_gold.item.ReinforcedGoldenSwordItem;
 import tn.nightbeam.better_with_gold.item.ReinforcedGreaterGoldenAxeItem;
 import tn.nightbeam.better_with_gold.item.ReinforcedGreaterGoldenHammerItem;
 import tn.nightbeam.better_with_gold.item.UpgradeTemplateItem;
+import tn.nightbeam.better_with_gold.item.WarbannerItem;
 
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.Item;
@@ -38,6 +39,7 @@ public final class ModItems {
 	public static Item REINFORCED_GOLDEN_SCYTHE;
 	public static Item REINFORCED_GREATER_GOLDEN_AXE;
 	public static Item REINFORCED_GREATER_GOLDEN_HAMMER;
+	public static Item WARBANNER;
 
 	private ModItems() {
 	}
@@ -60,6 +62,7 @@ public final class ModItems {
 		REINFORCED_GOLDEN_SCYTHE = registrar.register(id("reinforced_golden_scythe"), ReinforcedGoldenScytheItem::new);
 		REINFORCED_GREATER_GOLDEN_AXE = registrar.register(id("reinforced_greater_golden_axe"), ReinforcedGreaterGoldenAxeItem::new);
 		REINFORCED_GREATER_GOLDEN_HAMMER = registrar.register(id("reinforced_greater_golden_hammer"), ReinforcedGreaterGoldenHammerItem::new);
+		WARBANNER = registrar.register(id("warbanner"), WarbannerItem::new);
 	}
 
 	private static Identifier id(String path) {

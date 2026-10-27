@@ -254,7 +254,7 @@ public final class Warbands {
 
 	/** Pieces of Reinforced Golden Armour the leader wears, when within 24 blocks. */
 	public static int regaliaPieces(AllyEntity ally) {
-		if (ally.level().isClientSide) {
+		if (ally.level().isClientSide()) {
 			return 0;
 		}
 		ServerPlayer owner = ally.owner();
@@ -494,13 +494,14 @@ public final class Warbands {
 			}
 		}
 		if (player.isShiftKeyDown() && !stack.isEmpty() && (Compat.isWeapon(stack) || Compat.isArmor(stack) || stack.is(Items.SHIELD))) {
+			String given = stack.getHoverName().getString();
 			ItemStack old = ally.equip(stack);
 			consume(player, stack);
-			if (!old.isEmpty() && !player.getInventory().add(old)) {
-				player.drop(old, false);
+			if (!old.isEmpty()) {
+				Compat.giveBack(player, old);
 			}
 			Compat.playSound(level, ally.getX(), ally.getY(), ally.getZ(), "minecraft:item.armor.equip_generic", 1.0F, 1.0F);
-			Compat.message(player, Component.literal(r.name + " takes " + stack.getHoverName().getString() + ".").withStyle(ChatFormatting.GRAY), true);
+			Compat.message(player, Component.literal(r.name + " takes " + given + ".").withStyle(ChatFormatting.GRAY), true);
 			return InteractionResult.CONSUME;
 		}
 		openRoster(player, ally);

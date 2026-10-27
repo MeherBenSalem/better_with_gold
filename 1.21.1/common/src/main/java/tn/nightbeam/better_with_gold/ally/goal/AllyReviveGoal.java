@@ -69,7 +69,7 @@ public class AllyReviveGoal extends Goal {
 		if (ally.tickCount % 6 == 0 && ally.level() instanceof ServerLevel level) {
 			level.sendParticles(Compat.dust(0xF2C94C, 0.9F), patient.getX(), patient.getY() + 0.4, patient.getZ(), 3, 0.3, 0.2, 0.3, 0);
 			level.sendParticles(ParticleTypes.HAPPY_VILLAGER, patient.getX(), patient.getY() + 0.3, patient.getZ(), 1, 0.3, 0.1, 0.3, 0);
-			ally.swing(net.minecraft.world.InteractionHand.MAIN_HAND);
+			Compat.swing(ally, net.minecraft.world.InteractionHand.MAIN_HAND);
 		}
 		patient.addRevive(1.0F / (FellowshipConfig.INSTANCE.menderReviveSeconds * 20.0F), ally.record().name, ally);
 	}

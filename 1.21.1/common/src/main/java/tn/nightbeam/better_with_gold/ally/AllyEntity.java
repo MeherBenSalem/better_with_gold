@@ -143,7 +143,7 @@ public class AllyEntity extends PathfinderMob implements OwnableEntity {
 	}
 
 	public AllyClass allyClass() {
-		return ClassCatalog.get(level().isClientSide ? entityData.get(DATA_CLASS) : record.classId);
+		return ClassCatalog.get(level().isClientSide() ? entityData.get(DATA_CLASS) : record.classId);
 	}
 
 	public Role role() {
@@ -414,7 +414,7 @@ public class AllyEntity extends PathfinderMob implements OwnableEntity {
 
 	@Override
 	public boolean hurt(DamageSource source, float amount) {
-		if (level().isClientSide) {
+		if (level().isClientSide()) {
 			return false;
 		}
 		if (!Compat.bypassesInvulnerability(source)) {
@@ -437,11 +437,11 @@ public class AllyEntity extends PathfinderMob implements OwnableEntity {
 
 	@Override
 	public void die(DamageSource source) {
-		if (!level().isClientSide && isHired() && !isDowned() && !Compat.bypassesInvulnerability(source)) {
+		if (!level().isClientSide() && isHired() && !isDowned() && !Compat.bypassesInvulnerability(source)) {
 			enterDowned(source);
 			return;
 		}
-		if (!level().isClientSide && isHired()) {
+		if (!level().isClientSide() && isHired()) {
 			Warbands.allyFell(this, source.getEntity() != null ? Compat.typeName(source.getEntity()) : source.getMsgId());
 		}
 		super.die(source);
@@ -619,7 +619,7 @@ public class AllyEntity extends PathfinderMob implements OwnableEntity {
 
 	@Override
 	protected InteractionResult mobInteract(Player player, InteractionHand hand) {
-		if (level().isClientSide) {
+		if (level().isClientSide()) {
 			return InteractionResult.SUCCESS;
 		}
 		if (!(player instanceof ServerPlayer serverPlayer) || hand != InteractionHand.MAIN_HAND) {
@@ -659,7 +659,7 @@ public class AllyEntity extends PathfinderMob implements OwnableEntity {
 
 	@Override
 	public void remove(RemovalReason reason) {
-		if (!level().isClientSide) {
+		if (!level().isClientSide()) {
 			Warbands.untrack(this, reason.shouldDestroy());
 		}
 		super.remove(reason);

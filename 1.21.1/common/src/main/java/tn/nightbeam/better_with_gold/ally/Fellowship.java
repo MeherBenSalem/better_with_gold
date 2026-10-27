@@ -140,7 +140,7 @@ public final class Fellowship {
 
 	/** Called before damage lands. Returns false to cancel it. */
 	public static boolean allowDamage(LivingEntity victim, DamageSource source, float amount) {
-		if (victim.level().isClientSide) {
+		if (victim.level().isClientSide()) {
 			return true;
 		}
 		Entity attacker = source.getEntity();
@@ -165,7 +165,7 @@ public final class Fellowship {
 	}
 
 	public static void onDeath(LivingEntity victim, DamageSource source) {
-		if (victim.level().isClientSide || victim instanceof AllyEntity) {
+		if (victim.level().isClientSide() || victim instanceof AllyEntity) {
 			return;
 		}
 		boolean boss = Compat.isBoss(victim);

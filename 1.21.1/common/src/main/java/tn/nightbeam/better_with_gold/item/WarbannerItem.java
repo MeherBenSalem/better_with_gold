@@ -32,7 +32,7 @@ public class WarbannerItem extends Item {
 	@Override
 	public InteractionResult useOn(UseOnContext context) {
 		Player player = context.getPlayer();
-		if (context.getLevel().isClientSide || !(player instanceof ServerPlayer serverPlayer)) {
+		if (context.getLevel().isClientSide() || !(player instanceof ServerPlayer serverPlayer)) {
 			return InteractionResult.SUCCESS;
 		}
 		BlockPos clicked = context.getClickedPos();
@@ -44,10 +44,10 @@ public class WarbannerItem extends Item {
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
 		ItemStack stack = player.getItemInHand(hand);
-		if (!level.isClientSide && player instanceof ServerPlayer serverPlayer && !Warbands.liftBanner(serverPlayer)) {
+		if (!level.isClientSide() && player instanceof ServerPlayer serverPlayer && !Warbands.liftBanner(serverPlayer)) {
 			serverPlayer.displayClientMessage(Component.literal("Use the Warbanner on the ground to plant it.").withStyle(ChatFormatting.YELLOW), true);
 		}
-		return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
+		return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
 	}
 
 	@Override
