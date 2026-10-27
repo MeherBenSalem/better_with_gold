@@ -12,10 +12,14 @@ import tn.nightbeam.better_with_gold.compat.Compat;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.renderer.GameRenderer;
+import com.mojang.math.Axis;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import org.joml.Matrix4f;
 
@@ -28,7 +32,9 @@ import java.util.Map;
 public final class GuiCanvas implements Canvas {
 	private static final Map<String, ItemStack> ITEMS = new HashMap<>();
 	private static final Map<String, ResourceLocation> TEXTURES = new HashMap<>();
+	/** Pixel size of each GUI texture; the wheel art is 512x512. */
 	private static final Map<String, Integer> SIZES = Map.of("logo", 128);
+	private static final int DEFAULT_SIZE = 512;
 	private final GuiGraphics g;
 	private final Font font;
 	private BufferBuilder batch;
@@ -118,11 +124,51 @@ public final class GuiCanvas implements Canvas {
 		RenderSystem.setShaderColor(((argb >> 16) & 0xFF) / 255f, ((argb >> 8) & 0xFF) / 255f, (argb & 0xFF) / 255f, ((argb >>> 24) & 0xFF) / 255f);
 		g.pose().pushPose();
 		g.pose().translate(x, y, 0);
-		int size = SIZES.getOrDefault(name, 128);
+		int size = SIZES.getOrDefault(name, DEFAULT_SIZE);
 		g.pose().scale(w / (float) size, h / (float) size, 1);
 		g.blit(id, 0, 0, 0, 0, size, size, size, size);
 		g.pose().popPose();
 		RenderSystem.setShaderColor(1, 1, 1, 1);
+	}
+
+	@Override
+	public void textureRotated(String name, float cx, float cy, float w, float h, float degrees, int argb) {
+		flush();
+		ResourceLocation id = TEXTURES.computeIfAbsent(name, n -> Compat.id(Constants.MOD_ID, "textures/gui/" + n + ".png"));
+		RenderSystem.enableBlend();
+		RenderSystem.defaultBlendFunc();
+		RenderSystem.setShaderColor(((argb >> 16) & 0xFF) / 255f, ((argb >> 8) & 0xFF) / 255f, (argb & 0xFF) / 255f, ((argb >>> 24) & 0xFF) / 255f);
+		int size = SIZES.getOrDefault(name, DEFAULT_SIZE);
+		g.pose().pushPose();
+		g.pose().translate(cx, cy, 0);
+		g.pose().mulPose(Axis.ZP.rotationDegrees(degrees));
+		g.pose().translate(-w / 2, -h / 2, 0);
+		g.pose().scale(w / (float) size, h / (float) size, 1);
+		g.blit(id, 0, 0, 0, 0, size, size, size, size);
+		g.pose().popPose();
+		RenderSystem.setShaderColor(1, 1, 1, 1);
+	}
+
+	@Override
+	public boolean entity(int entityId, int x0, int y0, int x1, int y1, float mouseX, float mouseY) {
+		Minecraft mc = Minecraft.getInstance();
+		if (mc.level == null || !(mc.level.getEntity(entityId) instanceof LivingEntity living)) {
+			return false;
+		}
+		flush();
+		// the portrait shows no name tag: hide the name for the duration of the draw
+		Component name = living.getCustomName();
+		boolean visible = living.isCustomNameVisible();
+		living.setCustomName(null);
+		living.setCustomNameVisible(false);
+		try {
+			int scale = Math.max(8, (int) ((y1 - y0) / 2.15F));
+			InventoryScreen.renderEntityInInventoryFollowsMouse(g, x0, y0, x1, y1, scale, 0.0625F, mouseX, mouseY, living);
+		} finally {
+			living.setCustomName(name);
+			living.setCustomNameVisible(visible);
+		}
+		return true;
 	}
 
 	@Override

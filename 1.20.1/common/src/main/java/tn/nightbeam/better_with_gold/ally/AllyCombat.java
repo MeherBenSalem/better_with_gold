@@ -5,8 +5,6 @@ import tn.nightbeam.better_with_gold.core.AllyClass;
 import tn.nightbeam.better_with_gold.core.Chronicle;
 import tn.nightbeam.better_with_gold.core.Trait;
 
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
@@ -77,12 +75,8 @@ public final class AllyCombat {
 		int ticks = (int) Math.round(c.abilityPower * 20);
 		for (Mob mob : pulled) {
 			Threat.taunt(mob, ally, ticks);
-			level.sendParticles(ParticleTypes.ANGRY_VILLAGER, mob.getX(), mob.getY() + mob.getBbHeight() + 0.3, mob.getZ(), 1, 0, 0, 0, 0);
 		}
-		ring(level, ally.position(), c.abilityRadius * 0.6, Compat.dust(0x66CCFF, 1.4F), 28);
-		ring(level, ally.position(), c.abilityRadius * 0.3, ParticleTypes.CRIT, 16);
-		Compat.playSound(level, ally.getX(), ally.getY(), ally.getZ(), "minecraft:entity.ravager.roar", 0.5F, 1.5F);
-		Compat.playSound(level, ally.getX(), ally.getY(), ally.getZ(), "minecraft:item.shield.block", 0.9F, 0.8F);
+		Fx.challenge(level, ally, c.abilityRadius, pulled);
 		Compat.swing(ally, net.minecraft.world.InteractionHand.OFF_HAND);
 		return true;
 	}
@@ -95,10 +89,8 @@ public final class AllyCombat {
 		float damage = (float) (Compat.get(ally, "damage") * c.abilityPower);
 		for (Mob mob : near) {
 			Compat.hurt(mob, Compat.melee(ally), damage);
-			level.sendParticles(ParticleTypes.SWEEP_ATTACK, mob.getX(), mob.getY() + mob.getBbHeight() * 0.5, mob.getZ(), 1, 0, 0, 0, 0);
 		}
-		ring(level, ally.position().add(0, 0.8, 0), c.abilityRadius * 0.8, ParticleTypes.SWEEP_ATTACK, 8);
-		Compat.playSound(level, ally.getX(), ally.getY(), ally.getZ(), "minecraft:entity.player.attack.sweep", 1.0F, 0.9F);
+		Fx.whirl(level, ally, c.abilityRadius, near);
 		Compat.swing(ally, net.minecraft.world.InteractionHand.MAIN_HAND);
 		ally.markCombat();
 		return true;
@@ -138,9 +130,7 @@ public final class AllyCombat {
 		float healed = best.getHealth() - before;
 		ally.record().stats.healing += healed;
 		Threat.healed(ally, best, healed);
-		beam(level, ally.position().add(0, 1.2, 0), best.position().add(0, best.getBbHeight() * 0.6, 0), Compat.dust(0xF2C94C, 1.0F));
-		level.sendParticles(ParticleTypes.HEART, best.getX(), best.getY() + best.getBbHeight() + 0.2, best.getZ(), 3, 0.3, 0.2, 0.3, 0);
-		Compat.playSound(level, best.getX(), best.getY(), best.getZ(), "minecraft:block.amethyst_block.chime", 1.0F, 1.3F);
+		Fx.mend(level, ally, best);
 		Compat.swing(ally, net.minecraft.world.InteractionHand.MAIN_HAND);
 		if (best == owner && before <= 6 && Warbands.mayRecordSave(ally)) {
 			ally.chronicle(Chronicle.Type.SAVED_LEADER, Compat.playerName(owner), "", Math.max(1, (int) Math.ceil(before / 2)));
@@ -156,6 +146,7 @@ public final class AllyCombat {
 		ItemStack bow = ally.getMainHandItem();
 		float damage = ally.rangedDamage();
 		boolean keen = ally.record().has(Trait.KEEN);
+		List<Projectile> loosed = new ArrayList<>();
 		for (int i = 0; i < arrows; i++) {
 			Projectile arrow = Compat.arrow(ally, bow, damage);
 			double dx = target.getX() - ally.getX();
@@ -171,8 +162,13 @@ public final class AllyCombat {
 			}
 			arrow.shoot(dx, dy + dist * 0.2, dz, 1.6F, keen ? 2.0F : 5.0F);
 			level.addFreshEntity(arrow);
+			loosed.add(arrow);
 		}
-		Compat.playSound(level, ally.getX(), ally.getY(), ally.getZ(), "minecraft:entity.arrow.shoot", 1.0F, 1.0F / (ally.getRandom().nextFloat() * 0.4F + 0.8F));
+		if (arrows > 1) {
+			Fx.volley(level, ally, loosed);
+		} else {
+			Compat.playSound(level, ally.getX(), ally.getY(), ally.getZ(), "minecraft:entity.arrow.shoot", 1.0F, 1.0F / (ally.getRandom().nextFloat() * 0.4F + 0.8F));
+		}
 		ally.markCombat();
 		return true;
 	}
@@ -183,12 +179,8 @@ public final class AllyCombat {
 			return;
 		}
 		Vec3 from = ally.getEyePosition().add(ally.getLookAngle().scale(0.4));
-		Vec3 to = target.position().add(0, target.getBbHeight() * 0.6, 0);
-		beam(level, from, to, ParticleTypes.ELECTRIC_SPARK);
-		beam(level, from, to, Compat.dust(0xA06BE0, 0.9F));
-		level.sendParticles(ParticleTypes.WITCH, to.x, to.y, to.z, 8, 0.2, 0.2, 0.2, 0.05);
+		Fx.arcaneBolt(level, ally, from, target);
 		Compat.hurt(target, Compat.magic(ally), damage);
-		Compat.playSound(level, ally.getX(), ally.getY(), ally.getZ(), "minecraft:entity.evoker.cast_spell", 0.7F, 1.7F);
 		Compat.swing(ally, net.minecraft.world.InteractionHand.MAIN_HAND);
 		ally.markCombat();
 	}
@@ -208,31 +200,14 @@ public final class AllyCombat {
 		if (hit.size() < 2 && !Compat.isBoss(target)) {
 			return false;
 		}
-		Compat.visualLightning(level, target.getX(), target.getY(), target.getZ());
+		Fx.arcStorm(level, ally, target, c.abilityRadius, hit);
 		float damage = (float) (ally.rangedDamage() * c.abilityPower);
 		for (Mob mob : hit) {
 			Compat.hurt(mob, Compat.magic(ally), damage);
-			level.sendParticles(ParticleTypes.ELECTRIC_SPARK, mob.getX(), mob.getY() + mob.getBbHeight() * 0.5, mob.getZ(), 10, 0.3, 0.4, 0.3, 0.2);
 		}
-		ring(level, target.position().add(0, 0.1, 0), c.abilityRadius, Compat.dust(0xA06BE0, 1.5F), 36);
 		ally.abilityCooldown = c.abilityCooldown;
 		ally.markCombat();
 		return true;
 	}
 
-	static void ring(ServerLevel level, Vec3 centre, double radius, ParticleOptions particle, int points) {
-		for (int i = 0; i < points; i++) {
-			double a = 2 * Math.PI * i / points;
-			level.sendParticles(particle, centre.x + Math.sin(a) * radius, centre.y + 0.1, centre.z + Math.cos(a) * radius, 1, 0, 0, 0, 0);
-		}
-	}
-
-	static void beam(ServerLevel level, Vec3 from, Vec3 to, ParticleOptions particle) {
-		Vec3 d = to.subtract(from);
-		int steps = Math.max(2, (int) (d.length() * 3));
-		for (int i = 0; i <= steps; i++) {
-			Vec3 p = from.add(d.scale(i / (double) steps));
-			level.sendParticles(particle, p.x, p.y, p.z, 1, 0, 0, 0, 0);
-		}
-	}
 }

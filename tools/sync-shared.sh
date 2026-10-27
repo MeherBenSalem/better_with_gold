@@ -11,6 +11,7 @@ SHARED=(
   ally/goal
   ally/AllyCombat.java
   ally/Fellowship.java
+  ally/Fx.java
   ally/RasBridge.java
   ally/Sellswords.java
   ally/Threat.java
@@ -22,6 +23,8 @@ SHARED=(
   registry/ModEntities.java
   client/Canvas.java
   client/ClientFellowship.java
+  client/Icons.java
+  client/Ui.java
   client/PartyHud.java
   client/RosterView.java
   client/WheelView.java

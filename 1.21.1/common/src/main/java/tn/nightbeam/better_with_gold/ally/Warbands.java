@@ -398,10 +398,7 @@ public final class Warbands {
 		swear(ally, player);
 		ally.refreshNameplate();
 		ServerLevel level = (ServerLevel) ally.level();
-		level.sendParticles(ParticleTypes.HAPPY_VILLAGER, ally.getX(), ally.getY() + 1.2, ally.getZ(), 14, 0.4, 0.6, 0.4, 0.1);
-		AllyCombat.ring(level, ally.position(), 1.2, Compat.dust(0xF2C94C, 1.2F), 20);
-		Compat.playSound(level, ally.getX(), ally.getY(), ally.getZ(), "minecraft:item.armor.equip_gold", 1.0F, 1.0F);
-		Compat.playSound(level, ally.getX(), ally.getY(), ally.getZ(), "minecraft:block.bell.use", 0.4F, 1.4F);
+		Fx.oath(level, ally);
 		Compat.message(player, Component.literal(ally.record().fullName() + " swore the oath (" + ally.allyClass().name + ", level " + ally.record().level + ").")
 				.withStyle(ChatFormatting.GOLD), false);
 		pushRoster(player);
@@ -829,14 +826,7 @@ public final class Warbands {
 		s.banner = b;
 		s.order = Order.GUARD_BANNER.id();
 		s.dirty = true;
-		for (int i = 0; i < 48; i++) {
-			level.sendParticles(ParticleTypes.END_ROD, pos.getX() + 0.5, pos.getY() + i * 0.35, pos.getZ() + 0.5, 1, 0.05, 0.05, 0.05, 0.01);
-		}
-		AllyCombat.ring(level, Vec3.atBottomCenterOf(pos), 2.5, Compat.dust(0xF2C94C, 1.6F), 32);
-		AllyCombat.ring(level, Vec3.atBottomCenterOf(pos), 4.0, Compat.dust(0xF2C94C, 1.2F), 40);
-		level.sendParticles(ParticleTypes.TOTEM_OF_UNDYING, pos.getX() + 0.5, pos.getY() + 1.5, pos.getZ() + 0.5, 40, 0.6, 1.0, 0.6, 0.4);
-		Compat.playSound(level, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, "minecraft:item.goat_horn.sound.0", 1.0F, 1.0F);
-		Compat.playSound(level, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, "minecraft:item.trident.thunder", 0.25F, 1.6F);
+		Fx.bannerPlanted(level, Vec3.atBottomCenterOf(pos));
 		computeSlots(owner);
 		for (AllyEntity a : liveAllies(owner.getUUID())) {
 			a.record().order = Order.GUARD_BANNER.id();
@@ -1183,6 +1173,7 @@ public final class Warbands {
 		WarbandState s = state(owner.getUUID());
 		JsonObject msg = Net.message(Net.PARTY);
 		msg.addProperty("order", s.orderValue().label());
+		msg.addProperty("oid", s.orderValue().id());
 		msg.addProperty("formation", s.formationValue().label());
 		msg.addProperty("banner", s.banner != null);
 		msg.addProperty("cap", FellowshipConfig.INSTANCE.partySize);
@@ -1197,6 +1188,7 @@ public final class Warbands {
 			o.addProperty("n", a.record().name);
 			o.addProperty("c", a.record().classId);
 			o.addProperty("cn", a.allyClass().name);
+			o.addProperty("ro", a.role().name());
 			o.addProperty("col", a.allyClass().colorRgb());
 			o.addProperty("lv", a.record().level);
 			o.addProperty("hp", Math.round(a.getHealth() * 10) / 10.0);
@@ -1244,6 +1236,7 @@ public final class Warbands {
 		JsonObject msg = Net.message(Net.ROSTER);
 		msg.addProperty("cap", FellowshipConfig.INSTANCE.partySize);
 		msg.addProperty("order", s.orderValue().label());
+		msg.addProperty("oid", s.orderValue().id());
 		msg.addProperty("formation", s.formationValue().label());
 		msg.addProperty("permadeath", FellowshipConfig.INSTANCE.permadeath);
 		msg.addProperty("regalia", regaliaPieces(owner));
@@ -1252,7 +1245,9 @@ public final class Warbands {
 		for (AllyEntity a : liveAllies(owner.getUUID())) {
 			String where = a.level() != owner.level() ? Compat.dimensionName(a.level())
 					: (int) Math.sqrt(a.distanceToSqr(owner)) + " blocks away";
-			allies.add(rosterEntry(a.getUUID().toString(), a.record(), a.isDowned() ? "downed" : "active", where, a.getHealth(), a.getMaxHealth()));
+			JsonObject entry = rosterEntry(a.getUUID().toString(), a.record(), a.isDowned() ? "downed" : "active", where, a.getHealth(), a.getMaxHealth());
+			entry.addProperty("eid", a.getId());
+			allies.add(entry);
 		}
 		for (Map.Entry<String, WarbandState.Seen> e : s.seen.entrySet()) {
 			try {
@@ -1282,6 +1277,7 @@ public final class Warbands {
 			JsonObject o = new JsonObject();
 			o.addProperty("name", f.name);
 			o.addProperty("cls", ClassCatalog.get(f.classId).name);
+			o.addProperty("rid", ClassCatalog.get(f.classId).role().name());
 			o.addProperty("col", ClassCatalog.get(f.classId).colorRgb());
 			o.addProperty("lv", f.level);
 			o.addProperty("day", f.day);
@@ -1304,6 +1300,7 @@ public final class Warbands {
 		o.addProperty("epithet", r.epithet);
 		o.addProperty("cls", c.name);
 		o.addProperty("role", c.role().label());
+		o.addProperty("rid", c.role().name());
 		o.addProperty("col", c.colorRgb());
 		o.addProperty("ability", c.abilityName);
 		o.addProperty("abilityText", c.abilityDescription);

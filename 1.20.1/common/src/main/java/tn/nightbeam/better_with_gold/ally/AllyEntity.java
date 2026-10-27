@@ -306,9 +306,7 @@ public class AllyEntity extends PathfinderMob implements OwnableEntity {
 		Threat.forget(this);
 		Warbands.allyDowned(this);
 		if (level() instanceof ServerLevel server) {
-			server.sendParticles(ParticleTypes.DAMAGE_INDICATOR, getX(), getY() + 0.5, getZ(), 12, 0.4, 0.2, 0.4, 0.1);
-			Compat.playSound(server, getX(), getY(), getZ(), "minecraft:entity.player.big_fall", 1.0F, 0.7F);
-			Compat.playSound(server, getX(), getY(), getZ(), "minecraft:entity.player.hurt", 1.0F, 0.6F);
+			Fx.downed(server, this);
 		}
 		plate = "";
 	}
@@ -352,8 +350,7 @@ public class AllyEntity extends PathfinderMob implements OwnableEntity {
 			}
 		}
 		if (level() instanceof ServerLevel server) {
-			server.sendParticles(ParticleTypes.TOTEM_OF_UNDYING, getX(), getY() + 1.0, getZ(), 30, 0.4, 0.6, 0.4, 0.3);
-			Compat.playSound(server, getX(), getY(), getZ(), "minecraft:item.totem.use", 0.35F, 1.4F);
+			Fx.revived(server, this);
 		}
 		Warbands.allyRevived(this, byName);
 		plate = "";
@@ -396,12 +393,7 @@ public class AllyEntity extends PathfinderMob implements OwnableEntity {
 			entityData.set(DATA_REVIVE, (int) (reviveProgress * 100));
 		}
 		if (tickCount % 4 == 0) {
-			int points = 16;
-			int lit = Math.round(points * Math.max(0, Math.min(1, reviveProgress)));
-			for (int i = 0; i < points; i++) {
-				double a = 2 * Math.PI * i / points;
-				server.sendParticles(Compat.dust(i < lit ? 0xF2C94C : 0x6B1E1E, 0.8F), getX() + Math.sin(a) * 1.1, getY() + 0.15, getZ() + Math.cos(a) * 1.1, 1, 0, 0, 0, 0);
-			}
+			Fx.reviveRing(server, this, reviveProgress, tickCount);
 		}
 		if (left <= 0) {
 			bleedOut();
@@ -576,8 +568,7 @@ public class AllyEntity extends PathfinderMob implements OwnableEntity {
 		if (gained > 0) {
 			applyStats(true);
 			if (level() instanceof ServerLevel server) {
-				server.sendParticles(ParticleTypes.HAPPY_VILLAGER, getX(), getY() + 1.2, getZ(), 16, 0.4, 0.6, 0.4, 0.1);
-				Compat.playSound(server, getX(), getY(), getZ(), "minecraft:entity.player.levelup", 0.6F, 1.2F);
+				Fx.levelUp(server, this);
 			}
 			for (int l = before + 1; l <= record.level; l++) {
 				if (Progression.titleLevel(l)) {

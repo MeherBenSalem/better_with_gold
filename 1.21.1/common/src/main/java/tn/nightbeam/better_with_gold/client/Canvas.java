@@ -3,7 +3,7 @@ package tn.nightbeam.better_with_gold.client;
 import java.util.List;
 
 /**
- * Drawing operations used by the skill tree screen and the HUD. Each Minecraft version provides its own
+ * Drawing operations used by the Fellowship screens and the HUD. Each Minecraft version provides its own
  * implementation, so the screen logic itself is shared. Colors are ARGB.
  */
 public interface Canvas {
@@ -19,6 +19,17 @@ public interface Canvas {
 
 	/** Draws a whole texture from assets/better_with_gold/textures/gui/{name}.png, tinted. */
 	void texture(String name, float x, float y, float w, float h, int argb);
+
+	/** Draws a whole GUI texture rotated clockwise by {@code degrees} around its centre (cx, cy), tinted. */
+	void textureRotated(String name, float cx, float cy, float w, float h, float degrees, int argb);
+
+	/**
+	 * Draws the loaded living entity with this network id as a 3D portrait filling the box, turned toward the mouse,
+	 * without its name tag. Returns false when that entity is not loaded on this client.
+	 */
+	default boolean entity(int entityId, int x0, int y0, int x1, int y1, float mouseX, float mouseY) {
+		return false;
+	}
 
 	void item(String itemId, float x, float y, float size);
 

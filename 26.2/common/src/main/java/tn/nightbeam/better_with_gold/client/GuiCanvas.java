@@ -6,11 +6,18 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.entity.EntityRenderer;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import net.minecraft.client.renderer.entity.state.LivingEntityRenderState;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.Style;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.item.ItemStack;
 import org.joml.Matrix3x2fStack;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,7 +28,9 @@ import java.util.Map;
 public final class GuiCanvas implements Canvas {
 	private static final Map<String, ItemStack> ITEMS = new HashMap<>();
 	private static final Map<String, Identifier> TEXTURES = new HashMap<>();
+	/** Pixel size of each GUI texture; the wheel art is 512x512. */
 	private static final Map<String, Integer> SIZES = Map.of("logo", 128);
+	private static final int DEFAULT_SIZE = 512;
 	private final GuiGraphicsExtractor g;
 	private final Matrix3x2fStack pose;
 	private final Font font;
@@ -89,12 +98,57 @@ public final class GuiCanvas implements Canvas {
 	@Override
 	public void texture(String name, float x, float y, float w, float h, int argb) {
 		Identifier id = TEXTURES.computeIfAbsent(name, n -> Compat.id(Constants.MOD_ID, "textures/gui/" + n + ".png"));
-		int size = SIZES.getOrDefault(name, 128);
+		int size = SIZES.getOrDefault(name, DEFAULT_SIZE);
 		pose.pushMatrix();
 		pose.translate(x, y);
 		pose.scale(w / size, h / size);
 		g.blit(RenderPipelines.GUI_TEXTURED, id, 0, 0, 0, 0, size, size, size, size, argb);
 		pose.popMatrix();
+	}
+
+	@Override
+	public void textureRotated(String name, float cx, float cy, float w, float h, float degrees, int argb) {
+		Identifier id = TEXTURES.computeIfAbsent(name, n -> Compat.id(Constants.MOD_ID, "textures/gui/" + n + ".png"));
+		int size = SIZES.getOrDefault(name, DEFAULT_SIZE);
+		pose.pushMatrix();
+		pose.translate(cx, cy);
+		pose.rotate((float) Math.toRadians(degrees));
+		pose.translate(-w / 2, -h / 2);
+		pose.scale(w / size, h / size);
+		g.blit(RenderPipelines.GUI_TEXTURED, id, 0, 0, 0, 0, size, size, size, size, argb);
+		pose.popMatrix();
+	}
+
+	@Override
+	public boolean entity(int entityId, int x0, int y0, int x1, int y1, float mouseX, float mouseY) {
+		Minecraft mc = Minecraft.getInstance();
+		if (mc.level == null || !(mc.level.getEntity(entityId) instanceof LivingEntity living)) {
+			return false;
+		}
+		// as InventoryScreen.extractEntityInInventoryFollowsMouse, without the name tag
+		float centerX = (x0 + x1) / 2.0F;
+		float centerY = (y0 + y1) / 2.0F;
+		float xAngle = (float) Math.atan((centerX - mouseX) / 40.0F);
+		float yAngle = (float) Math.atan((centerY - mouseY) / 40.0F);
+		Quaternionf rotation = new Quaternionf().rotateZ((float) Math.PI);
+		Quaternionf xRotation = new Quaternionf().rotateX(yAngle * 20.0F * (float) (Math.PI / 180.0));
+		rotation.mul(xRotation);
+		EntityRenderer<? super LivingEntity, ?> renderer = mc.getEntityRenderDispatcher().getRenderer(living);
+		EntityRenderState state = renderer.createRenderState(living, 1.0F);
+		state.shadowPieces.clear();
+		state.outlineColor = 0;
+		state.nameTag = null;
+		if (state instanceof LivingEntityRenderState living2) {
+			living2.bodyRot = 180.0F + xAngle * 20.0F;
+			living2.yRot = xAngle * 20.0F;
+			living2.xRot = living2.pose != Pose.FALL_FLYING ? -yAngle * 20.0F : 0.0F;
+			living2.boundingBoxWidth = living2.boundingBoxWidth / living2.scale;
+			living2.boundingBoxHeight = living2.boundingBoxHeight / living2.scale;
+			living2.scale = 1.0F;
+		}
+		int size = Math.max(8, (int) ((y1 - y0) / 2.15F));
+		g.entity(state, size, new Vector3f(0.0F, state.boundingBoxHeight / 2.0F + 0.0625F, 0.0F), rotation, xRotation, x0, y0, x1, y1);
+		return true;
 	}
 
 	@Override

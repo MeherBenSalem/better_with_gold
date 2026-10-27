@@ -10,9 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The roster: every ally in the world, at camp or recovering, with class, level, morale, traits, ability, stats
- * and their Chronicle; and the Remembrance of the fallen. Drawn on a Canvas so the screen is shared by every
- * version; each version only wraps it in its own Screen.
+ * The roster: every ally in the world, at camp or recovering, and the Remembrance of the fallen. The selected ally
+ * gets a live 3D portrait (when loaded nearby), its bars, six stat tiles, trait and ability chips with tooltips and
+ * its Chronicle as a timeline. Drawn on a Canvas so the screen is shared by every version; each version only wraps
+ * it in its own Screen.
  */
 public final class RosterView {
 	public interface Host {
@@ -22,6 +23,7 @@ public final class RosterView {
 	}
 
 	private final Host host;
+	private final long opened = System.nanoTime();
 	private String selectedId;
 	private int selected;
 	private boolean remembrance;
@@ -29,20 +31,24 @@ public final class RosterView {
 	private float listScroll;
 	private long lastRequest = -1000;
 	private long lastVersion = -1;
+	private long selectedAt = System.nanoTime();
+	private float highlightY = -1;
 	private String confirmDismiss = "";
 	private final List<Button> buttons = new ArrayList<>();
+	private Tip tip;
 	private float px0;
 	private float py0;
 	private float px1;
 	private float py1;
-	private float chronicleTop;
-	private float chronicleBottom;
-	private float listBottom;
+	private float listX1;
 
 	private record Button(float x0, float y0, float x1, float y1, Runnable action) {
 		boolean hit(double x, double y) {
 			return x >= x0 && x <= x1 && y >= y0 && y <= y1;
 		}
+	}
+
+	private record Tip(String title, String body, int color) {
 	}
 
 	public RosterView(Host host, String selectedId) {
@@ -77,8 +83,15 @@ public final class RosterView {
 		return out;
 	}
 
+	private static boolean in(double mx, double my, float x0, float y0, float x1, float y1) {
+		return mx >= x0 && mx <= x1 && my >= y0 && my <= y1;
+	}
+
 	public void render(Canvas c, double mouseX, double mouseY) {
 		buttons.clear();
+		tip = null;
+		ClientFellowship.rosterShown();
+		float open = Ui.ease((System.nanoTime() - opened) / 1e9F / 0.18F);
 		JsonObject data = ClientFellowship.rosterData();
 		List<JsonObject> entries = remembrance ? fallen() : allies();
 		if (ClientFellowship.rosterVersion() != lastVersion) {
@@ -92,159 +105,257 @@ public final class RosterView {
 			}
 		}
 		selected = Math.max(0, Math.min(selected, entries.size() - 1));
-		float w = Math.min(430, c.width() - 16);
-		float h = Math.min(270, c.height() - 16);
+		float w = Math.min(468, c.width() - 20);
+		float h = Math.min(286, c.height() - 20);
+		float rise = 8 * (1 - open);
 		px0 = (c.width() - w) / 2;
-		py0 = (c.height() - h) / 2;
+		py0 = (c.height() - h) / 2 + rise;
 		px1 = px0 + w;
 		py1 = py0 + h;
-		c.fill(0, 0, c.width(), c.height(), 0x88000000);
-		c.panel(px0, py0, px1, py1, 0xFFC8A04A);
-		c.text("REMNANTS | FELLOWSHIP", px0 + 8, py0 + 6, 0.75F, 0xFFF2C94C, true);
+		c.fill(0, 0, c.width(), c.height(), Ui.fade(0x99000000, open));
+		Ui.frame(c, px0, py0, px1, py1, open);
+		Icons.draw(c, Icons.GUARD_BANNER, px0 + 8, py0 + 6, 11 / 16F, 0, open);
+		c.text("REMNANTS | FELLOWSHIP", px0 + 22, py0 + 8.5F, 0.8F, Ui.fade(Ui.GOLD, open), true);
 		int cap = data == null ? ClientFellowship.cap() : Net.integer(data, "cap", 6);
-		tab(c, "Warband " + allies().size() + "/" + cap, px1 - 172, py0 + 4, !remembrance, () -> {
-			remembrance = false;
-			selected = 0;
-			scroll = 0;
-		});
-		tab(c, "Remembrance " + fallen().size(), px1 - 86, py0 + 4, remembrance, () -> {
+		float tx = px1 - 8;
+		tx = tab(c, "Remembrance  " + fallen().size(), Icons.SKULL, tx, py0 + 5, remembrance, mouseX, mouseY, open, () -> {
 			remembrance = true;
-			selected = 0;
-			scroll = 0;
+			select(0, entries);
 		});
-		c.fill(px0 + 6, py0 + 18, px1 - 6, py0 + 19, 0x55C8A04A);
+		tab(c, "Warband  " + allies().size() + "/" + cap, Icons.GUARD_BANNER, tx - 4, py0 + 5, !remembrance, mouseX, mouseY, open, () -> {
+			remembrance = false;
+			select(0, entries);
+		});
+		Ui.rule(c, px0 + 8, px1 - 8, py0 + 22, open);
 		if (data == null) {
-			c.centered("Gathering the roster...", (px0 + px1) / 2, (py0 + py1) / 2, 1, 0xFFAAAAAA, true);
+			c.centered("Gathering the roster...", (px0 + px1) / 2, (py0 + py1) / 2, 0.9F, Ui.fade(Ui.DIM, open), true);
 			return;
 		}
-		float listX1 = px0 + 128;
-		listBottom = py1 - 22;
-		renderList(c, entries, px0 + 6, py0 + 23, listX1, listBottom, mouseX, mouseY);
+		listX1 = px0 + 146;
+		renderList(c, entries, px0 + 8, py0 + 27, listX1, py1 - 22, mouseX, mouseY, open);
+		float dx0 = listX1 + 8;
 		if (entries.isEmpty()) {
 			String empty = remembrance ? "No one has fallen under your banner." : "No allies yet. Find sellswords near village bells and pay them in gold.";
-			List<String> lines = c.wrap(empty, (int) ((px1 - listX1 - 20) / 0.85F));
-			float y = py0 + 40;
-			for (String line : lines) {
-				c.text(line, listX1 + 10, y, 0.85F, 0xFFBBBBBB, true);
+			Icons.draw(c, remembrance ? Icons.SKULL : Icons.COIN, (dx0 + px1 - 8) / 2 - 16, py0 + 60, 2, 0, 0.5F * open);
+			float y = py0 + 100;
+			for (String line : c.wrap(empty, (int) ((px1 - dx0 - 30) / 0.8F))) {
+				c.centered(line, (dx0 + px1 - 8) / 2, y, 0.8F, Ui.fade(Ui.DIM, open), true);
 				y += 10;
 			}
-		} else if (remembrance) {
-			renderFallen(c, entries.get(selected), listX1 + 8, py0 + 23, px1 - 8, py1 - 22);
 		} else {
-			renderAlly(c, entries.get(selected), listX1 + 8, py0 + 23, px1 - 8, py1 - 22);
+			float fade = open * Ui.ease((System.nanoTime() - selectedAt) / 1e9F / 0.15F);
+			if (remembrance) {
+				renderFallen(c, entries.get(selected), dx0, py0 + 27, px1 - 8, py1 - 22, fade);
+			} else {
+				renderAlly(c, entries.get(selected), dx0, py0 + 27, px1 - 8, py1 - 22, mouseX, mouseY, fade);
+			}
 		}
-		String footer = "Order: " + Net.string(data, "order", "Follow") + "  ·  Formation: " + Net.string(data, "formation", "Line")
-				+ "  ·  Hold G for the command wheel";
-		c.text(footer, px0 + 8, py1 - 13, 0.62F, 0xFF999999, true);
-		if (data.has("permadeath") && data.get("permadeath").getAsBoolean()) {
-			c.text("PERMADEATH ON", px1 - 8 - c.textWidth("PERMADEATH ON") * 0.62F, py1 - 13, 0.62F, 0xFFFF5555, true);
+		footer(c, data, open);
+		if (tip != null) {
+			Ui.tooltip(c, (float) mouseX, (float) mouseY, tip.title(), tip.body(), tip.color());
 		}
 	}
 
-	private void tab(Canvas c, String label, float x, float y, boolean active, Runnable action) {
-		float w = 82;
-		c.fill(x, y, x + w, y + 12, active ? 0xFF2A2410 : 0xFF14141C);
-		c.rect(x, y, x + w, y + 12, active ? 0xFFF2C94C : 0x66C8A04A);
-		c.centered(label, x + w / 2, y + 3, 0.65F, active ? 0xFFF2C94C : 0xFFAAAAAA, true);
-		buttons.add(new Button(x, y, x + w, y + 12, action));
+	private void select(int index, List<JsonObject> entries) {
+		selected = index;
+		scroll = 0;
+		confirmDismiss = "";
+		selectedAt = System.nanoTime();
 	}
 
-	private void renderList(Canvas c, List<JsonObject> entries, float x0, float y0, float x1, float y1, double mx, double my) {
-		c.fill(x0, y0, x1, y1, 0x66000000);
-		int rowH = 22;
-		float maxScroll = Math.max(0, entries.size() * rowH - (y1 - y0));
+	private float tab(Canvas c, String label, Icons.Icon icon, float right, float y, boolean active, double mx, double my, float alpha, Runnable action) {
+		float w = c.textWidth(label) * 0.62F + 22;
+		float x = right - w;
+		boolean hover = in(mx, my, x, y, right, y + 13);
+		c.fill(x - 0.5F, y - 0.5F, right + 0.5F, y + 13.5F, Ui.fade(0xFF050507, alpha));
+		c.gradient(x, y, right, y + 13, Ui.fade(active ? 0xFF3A2C0E : hover ? 0xFF22202C : 0xFF16151E, alpha),
+				Ui.fade(active ? 0xFF1E1606 : 0xFF0E0D14, alpha));
+		c.rect(x, y, right, y + 13, Ui.fade(active ? Ui.GOLD : hover ? 0xAAE8B63E : 0x55C8A04A, alpha));
+		if (active) {
+			c.fill(x + 1, y + 12, right - 1, y + 13, Ui.fade(Ui.GOLD_HI, alpha));
+		}
+		Icons.draw(c, icon, x + 4, y + 2.5F, 8 / 16F, 0, alpha * (active ? 1 : 0.6F));
+		c.text(label, x + 15, y + 3.6F, 0.62F, Ui.fade(active ? Ui.GOLD_HI : hover ? Ui.TEXT : Ui.DIM, alpha), true);
+		buttons.add(new Button(x, y, right, y + 13, action));
+		return x;
+	}
+
+	private void renderList(Canvas c, List<JsonObject> entries, float x0, float y0, float x1, float y1, double mx, double my, float alpha) {
+		Ui.inset(c, x0, y0, x1, y1, 0x44C8A04A, alpha);
+		int rowH = 26;
+		float maxScroll = Math.max(0, entries.size() * rowH - (y1 - y0 - 2));
 		listScroll = Math.max(0, Math.min(listScroll, maxScroll));
-		c.scissor((int) x0, (int) y0, (int) x1, (int) y1);
+		float targetY = y0 + 1 + selected * rowH - listScroll;
+		highlightY = highlightY < 0 ? targetY : highlightY + (targetY - highlightY) * 0.35F;
+		c.scissor((int) x0 + 1, (int) y0 + 1, (int) x1 - 1, (int) y1 - 1);
+		if (!entries.isEmpty()) {
+			c.gradient(x0 + 1, highlightY, x1 - 1, highlightY + rowH - 1, Ui.fade(0x55E8B63E, alpha), Ui.fade(0x18E8B63E, alpha));
+			c.fill(x0 + 1, highlightY, x0 + 2.5F, highlightY + rowH - 1, Ui.fade(Ui.GOLD_HI, alpha));
+		}
 		for (int i = 0; i < entries.size(); i++) {
 			JsonObject e = entries.get(i);
-			float ry = y0 + i * rowH - listScroll;
+			float ry = y0 + 1 + i * rowH - listScroll;
 			if (ry + rowH < y0 || ry > y1) {
 				continue;
 			}
 			boolean sel = i == selected;
-			boolean hover = mx >= x0 && mx <= x1 && my >= ry && my < ry + rowH && my >= y0 && my <= y1;
-			c.fill(x0 + 1, ry + 1, x1 - 1, ry + rowH - 1, sel ? 0xFF2A2410 : hover ? 0xFF1A1A24 : 0x00000000);
-			int color = 0xFF000000 | Net.integer(e, "col", 0xC8A04A);
-			c.fill(x0 + 2, ry + 2, x0 + 4, ry + rowH - 2, color);
-			c.text(Net.string(e, "name", "?"), x0 + 8, ry + 4, 0.75F, sel ? 0xFFF2C94C : 0xFFFFFFFF, true);
-			String sub = Net.string(e, "cls", "") + " " + Net.integer(e, "lv", 1);
-			if (!remembrance) {
-				String state = Net.string(e, "state", "active");
-				int stateColor = switch (state) {
-					case "downed" -> 0xFFFF5555;
-					case "camp" -> 0xFF88AACC;
-					case "recovering" -> 0xFFE0B03A;
-					case "away" -> 0xFF999999;
-					default -> 0xFF66CC77;
-				};
-				c.text(state.toUpperCase(), x1 - 4 - c.textWidth(state.toUpperCase()) * 0.5F, ry + 13, 0.5F, stateColor, true);
+			boolean hover = in(mx, my, x0, Math.max(y0, ry), x1, Math.min(y1, ry + rowH));
+			if (hover && !sel) {
+				c.fill(x0 + 1, ry, x1 - 1, ry + rowH - 1, Ui.fade(0x14FFFFFF, alpha));
 			}
-			c.text(sub, x0 + 8, ry + 13, 0.6F, 0xFF999999, true);
+			int color = Net.integer(e, "col", 0xC8A04A);
+			String state = remembrance ? "fallen" : Net.string(e, "state", "active");
+			float ex = x0 + 5;
+			if (remembrance) {
+				Ui.emblem(c, ex, ry + 4, 18, Net.string(e, "rid", "TANK"), 0x777480, alpha * 0.8F);
+			} else {
+				Ui.emblem(c, ex, ry + 4, 18, Net.string(e, "rid", "TANK"), color, alpha);
+			}
+			float nx = ex + 23;
+			c.text(Net.string(e, "name", "?"), nx, ry + 4.5F, 0.72F, Ui.fade(sel ? Ui.GOLD_HI : remembrance ? 0xFFC8C4D0 : Ui.TEXT, alpha), true);
+			String sub = Net.string(e, "cls", "") + "  ·  Lv " + Net.integer(e, "lv", 1);
+			c.text(sub, nx, ry + 13.5F, 0.55F, Ui.fade(Ui.DIM, alpha), true);
+			int stateColor = switch (state) {
+				case "downed" -> 0xFFFF5A50;
+				case "camp" -> 0xFF8AB4E0;
+				case "recovering" -> Ui.AMBER;
+				case "away", "fallen" -> 0xFF8A8698;
+				default -> Ui.GREEN;
+			};
+			String label = state.toUpperCase();
+			float lw = c.textWidth(label) * 0.45F;
+			float dot = state.equals("downed") ? 0.4F + 0.6F * Ui.pulse(0.8F) : 1;
+			Ui.diamond(c, x1 - 7 - lw - 4, ry + 6.6F, 1, 1, Ui.fade(stateColor, alpha * dot));
+			c.text(label, x1 - 5 - lw, ry + 5, 0.45F, Ui.fade(stateColor, alpha), true);
+			if (!remembrance && (state.equals("active") || state.equals("downed"))) {
+				double hp = e.has("hp") ? e.get("hp").getAsDouble() : 0;
+				double mhp = e.has("mhp") ? e.get("mhp").getAsDouble() : 1;
+				float frac = state.equals("downed") ? 0 : (float) (hp / Math.max(1, mhp));
+				c.fill(nx, ry + 21, x1 - 5, ry + 22.5F, Ui.fade(0xFF1A1C24, alpha));
+				c.fill(nx, ry + 21, nx + (x1 - 5 - nx) * frac, ry + 22.5F, Ui.fade(frac > 0.5F ? Ui.GREEN : frac > 0.25F ? Ui.AMBER : Ui.RED, alpha));
+			}
 			final int index = i;
-			if (ry >= y0 && ry + rowH <= y1 + rowH) {
-				buttons.add(new Button(x0, Math.max(y0, ry), x1, Math.min(y1, ry + rowH), () -> {
-					selected = index;
-					scroll = 0;
-					confirmDismiss = "";
-					selectedId = Net.string(entries.get(index), "id", "");
-				}));
-			}
+			buttons.add(new Button(x0, Math.max(y0, ry), x1, Math.min(y1, ry + rowH), () -> {
+				select(index, entries);
+				selectedId = Net.string(entries.get(index), "id", "");
+			}));
 		}
 		c.endScissor();
+		if (maxScroll > 0) {
+			float track = y1 - y0 - 4;
+			float thumb = Math.max(12, track * (y1 - y0) / (entries.size() * rowH));
+			float ty = y0 + 2 + (track - thumb) * (listScroll / maxScroll);
+			c.fill(x1 - 2.5F, y0 + 2, x1 - 1.5F, y1 - 2, Ui.fade(0x33FFFFFF, alpha));
+			c.fill(x1 - 2.5F, ty, x1 - 1.5F, ty + thumb, Ui.fade(Ui.GOLD, alpha));
+		}
 	}
 
-	private void renderAlly(Canvas c, JsonObject e, float x0, float y0, float x1, float y1) {
-		int color = 0xFF000000 | Net.integer(e, "col", 0xC8A04A);
+	private void renderAlly(Canvas c, JsonObject e, float x0, float y0, float x1, float y1, double mx, double my, float alpha) {
+		int color = Net.integer(e, "col", 0xC8A04A);
+		String role = Net.string(e, "rid", "TANK");
+		String state = Net.string(e, "state", "active");
+		// portrait
+		float pw = 76;
+		float ph = 98;
+		portrait(c, e, x0, y0, x0 + pw, y0 + ph, color, role, state, mx, my, alpha);
+		// name block
+		float nx = x0 + pw + 8;
 		String name = Net.string(e, "name", "?");
+		c.text(name, nx, y0 + 1, 1.25F, Ui.fade(Ui.opaque(Canvas.mix(color, 0xFFFFFF, 0.2F)), alpha), true);
 		String epithet = Net.string(e, "epithet", "");
-		c.text(name + (epithet.isEmpty() ? "" : " " + epithet), x0, y0, 1.15F, color, true);
-		String title = Net.string(e, "cls", "") + " · " + Net.string(e, "role", "") + " · Level " + Net.integer(e, "lv", 1) + " " + Net.string(e, "title", "");
-		c.text(title, x0, y0 + 13, 0.7F, 0xFFDDDDDD, true);
-		c.text("“" + Net.string(e, "headline", "") + "”", x0, y0 + 22, 0.7F, 0xFFF2C94C, true);
-		float y = y0 + 33;
-		float half = (x1 - x0) / 2 - 4;
-		bar(c, x0, y, half, "Health", e.get("hp").getAsDouble(), e.get("mhp").getAsDouble(), 0xFF4CC36B, String.format("%.0f / %.0f", e.get("hp").getAsDouble(), e.get("mhp").getAsDouble()));
-		bar(c, x0 + half + 8, y, half, "Experience", Net.integer(e, "xp", 0), Math.max(1, Net.integer(e, "xpNext", 1)), 0xFF5B8DEF,
-				Net.integer(e, "xp", 0) + " / " + Net.integer(e, "xpNext", 1));
-		y += 15;
-		bar(c, x0, y, half, "Morale", Net.integer(e, "morale", 0), 100, 0xFFF2C94C, Net.integer(e, "morale", 0) + " " + Net.string(e, "moraleState", ""));
-		c.text(Net.string(e, "where", ""), x0 + half + 8, y + 3, 0.65F, 0xFFAAAAAA, true);
-		y += 15;
-		StringBuilder traits = new StringBuilder();
+		if (!epithet.isEmpty()) {
+			c.text(epithet, nx + c.textWidth(name) * 1.25F + 5, y0 + 4.2F, 0.75F, Ui.fade(Ui.GOLD, alpha), true);
+		}
+		Icons.draw(c, Icons.role(role), nx, y0 + 13, 8 / 16F, color, alpha);
+		String cls = Net.string(e, "cls", "") + "  ·  " + Net.string(e, "role", "") + "  ·  ";
+		c.text(cls, nx + 10, y0 + 14.4F, 0.62F, Ui.fade(Ui.DIM, alpha), true);
+		String title = Net.string(e, "title", "");
+		if (!title.isEmpty()) {
+			c.text(title, nx + 10 + c.textWidth(cls) * 0.62F, y0 + 14.4F, 0.62F, Ui.fade(Ui.GOLD, alpha), true);
+		}
+		c.text("“" + Net.string(e, "headline", "") + "”", nx, y0 + 23.5F, 0.6F, Ui.fade(0xFFD8C690, alpha), true);
+		// bars
+		float bw = x1 - nx;
+		double hp = e.get("hp").getAsDouble();
+		double mhp = Math.max(1, e.get("mhp").getAsDouble());
+		float by = y0 + 33;
+		statBar(c, Icons.HEART, "Health", String.format("%.0f / %.0f", hp, mhp), nx, by, bw, (float) (hp / mhp), Ui.GREEN,
+				(int) Math.max(1, Math.min(16, Math.round(mhp / 10))), alpha);
+		int xp = Net.integer(e, "xp", 0);
+		int next = Math.max(1, Net.integer(e, "xpNext", 1));
+		int lv = Net.integer(e, "lv", 1);
+		statBar(c, Icons.XP, "Level " + lv, xp + " / " + next + " xp", nx, by + 13, bw, xp / (float) next, Ui.BLUE, 1, alpha);
+		int morale = Net.integer(e, "morale", 0);
+		int moraleColor = morale >= 80 ? Ui.GOLD : morale > 25 ? 0xFFD49A3A : Ui.RED;
+		statBar(c, Icons.FLAME, "Morale", morale + "  " + Net.string(e, "moraleState", ""), nx, by + 26, bw, morale / 100F, moraleColor, 4, alpha);
+		// stat tiles
+		JsonObject stats = e.getAsJsonObject("stats");
+		Object[][] tiles = {
+				{Icons.SKULL, Net.integer(stats, "kills", 0), "Kills", "Enemies this ally finished or helped finish."},
+				{Icons.CROWN, Net.integer(stats, "bosses", 0), "Bosses", "Bosses slain."},
+				{Icons.MELEE, Net.integer(stats, "bossFights", 0), "Boss fights", "Boss fights survived."},
+				{Icons.DOWN, Net.integer(stats, "downs", 0), "Downed", "Times this ally went down."},
+				{Icons.REVIVE, Net.integer(stats, "revives", 0), "Revives", "Band-mates this ally pulled back up."},
+				{Icons.HEART, Net.integer(stats, "healing", 0), "Healed", "Health restored to the band."},
+		};
+		float ty = by + 40;
+		float tw = (bw - 5 * 3) / 6;
+		for (int i = 0; i < tiles.length; i++) {
+			float tx0 = nx + i * (tw + 3);
+			boolean hover = in(mx, my, tx0, ty, tx0 + tw, ty + 21);
+			c.fill(tx0, ty, tx0 + tw, ty + 21, Ui.fade(hover ? 0xFF262434 : 0xFF14131C, alpha));
+			c.rect(tx0, ty, tx0 + tw, ty + 21, Ui.fade(hover ? 0xAAE8B63E : 0x40C8A04A, alpha));
+			Icons.draw(c, (Icons.Icon) tiles[i][0], tx0 + 3, ty + 3, 8 / 16F, Ui.GOLD, alpha);
+			String v = String.valueOf(tiles[i][1]);
+			c.text(v, tx0 + tw - 3 - c.textWidth(v) * 0.75F, ty + 3.2F, 0.75F, Ui.fade(Ui.TEXT, alpha), true);
+			c.centered((String) tiles[i][2], tx0 + tw / 2, ty + 13.5F, 0.45F, Ui.fade(Ui.DIM, alpha), true);
+			if (hover) {
+				tip = new Tip((String) tiles[i][2], (String) tiles[i][3], Ui.GOLD);
+			}
+		}
+		// traits and ability chips
+		float cy = y0 + ph + 6;
+		float cx = x0;
 		for (JsonElement t : e.getAsJsonArray("traits")) {
 			JsonObject to = t.getAsJsonObject();
-			traits.append(traits.length() == 0 ? "" : "   ").append(Net.string(to, "n", "")).append(": ").append(Net.string(to, "d", ""));
+			String tn = Net.string(to, "n", "");
+			float w = c.textWidth(tn) * 0.58F + 8;
+			boolean hover = in(mx, my, cx, cy, cx + w, cy + 10);
+			cx = Ui.chip(c, cx, cy, tn, 0xB89AF0, hover, alpha) + 3;
+			if (hover) {
+				tip = new Tip("Trait: " + tn, Net.string(to, "d", ""), 0xFFC9B7F0);
+			}
 		}
-		y = wrapped(c, traits.toString(), x0, y, x1 - x0, 0.62F, 0xFFC9B7F0);
-		y = wrapped(c, Net.string(e, "ability", "") + ": " + Net.string(e, "abilityText", ""), x0, y + 1, x1 - x0, 0.62F, 0xFF9AD1FF);
-		JsonObject stats = e.getAsJsonObject("stats");
-		String s = Net.integer(stats, "kills", 0) + " kills  ·  " + Net.integer(stats, "bosses", 0) + " bosses slain  ·  "
-				+ Net.integer(stats, "bossFights", 0) + " boss fights  ·  downed " + Net.integer(stats, "downs", 0) + "  ·  revived "
-				+ Net.integer(stats, "revives", 0) + "  ·  healed " + Net.integer(stats, "healing", 0);
-		c.text(s, x0, y + 2, 0.6F, 0xFFBBBBBB, true);
-		y += 12;
-		c.text("CHRONICLE", x0, y, 0.65F, 0xFFF2C94C, true);
-		y += 9;
-		chronicleTop = y;
-		chronicleBottom = y1 - 16;
-		List<String> lines = new ArrayList<>();
-		JsonArray arr = e.getAsJsonArray("lines");
-		for (int i = arr.size() - 1; i >= 0; i--) {
-			lines.addAll(c.wrap(arr.get(i).getAsString(), (int) ((x1 - x0) / 0.66F)));
+		String ability = Net.string(e, "ability", "");
+		if (!ability.isEmpty()) {
+			float w = c.textWidth(ability) * 0.58F + 8 + 10;
+			boolean hover = in(mx, my, cx, cy, cx + w, cy + 10);
+			c.fill(cx, cy, cx + w, cy + 10, Ui.fade(hover ? 0xFF1E2A3C : 0xFF141A26, alpha));
+			c.rect(cx, cy, cx + w, cy + 10, Ui.fade(hover ? 0xFF9AD1FF : 0xFF5A86B8, alpha));
+			Icons.draw(c, Icons.role(role), cx + 2, cy + 1, 8 / 16F, color, alpha);
+			c.text(ability, cx + 12, cy + 2.6F, 0.58F, Ui.fade(0xFFBFE2FF, alpha), true);
+			if (hover) {
+				tip = new Tip("Ability: " + ability, Net.string(e, "abilityText", ""), 0xFF9AD1FF);
+			}
 		}
-		scrolled(c, lines, x0, chronicleTop, x1, chronicleBottom, 0.66F, 0xFFDDD6C4);
+		c.text(Net.string(e, "where", ""), x1 - c.textWidth(Net.string(e, "where", "")) * 0.55F, cy + 2.8F, 0.55F, Ui.fade(Ui.MUTED, alpha), true);
+		// chronicle
+		float chTop = cy + 14;
+		chronicle(c, e.getAsJsonArray("lines"), x0, chTop, x1, y1 - 17, alpha);
+		// actions
 		String id = Net.string(e, "id", "");
-		String state = Net.string(e, "state", "active");
-		float by = y1 - 13;
+		float by2 = y1 - 13;
 		if (state.equals("camp")) {
-			button(c, "Summon", x0, by, () -> send(Net.SUMMON, id));
+			action(c, "Summon", x0, by2, false, mx, my, alpha, () -> send(Net.SUMMON, id));
 		} else if (state.equals("active")) {
-			button(c, "Send to camp", x0, by, () -> send(Net.STOW, id));
+			action(c, "Send to camp", x0, by2, false, mx, my, alpha, () -> send(Net.STOW, id));
 		} else if (state.equals("away")) {
-			button(c, "Recall", x0, by, () -> ClientFellowship.send(Net.message(Net.RECALL)));
+			action(c, "Recall", x0, by2, false, mx, my, alpha, () -> ClientFellowship.send(Net.message(Net.RECALL)));
 		}
 		boolean confirming = confirmDismiss.equals(id);
-		button(c, confirming ? "Click again to dismiss" : "Dismiss", x1 - (confirming ? 110 : 60), by, () -> {
+		String label = confirming ? "Click again to dismiss" : "Dismiss";
+		float dw = c.textWidth(label) * 0.7F + 16;
+		action(c, label, x1 - dw, by2, true, mx, my, alpha, () -> {
 			if (confirmDismiss.equals(id)) {
 				send(Net.DISMISS, id);
 				confirmDismiss = "";
@@ -255,63 +366,164 @@ public final class RosterView {
 		});
 	}
 
-	private static String plural(int n, String one, String many) {
-		return n + " " + (n == 1 ? one : many);
-	}
-
-	private void renderFallen(Canvas c, JsonObject e, float x0, float y0, float x1, float y1) {
-		int color = 0xFF000000 | Net.integer(e, "col", 0xC8A04A);
-		c.text(Net.string(e, "name", "?"), x0, y0, 1.15F, color, true);
-		c.text(Net.string(e, "cls", "") + " · Level " + Net.integer(e, "lv", 1) + " · fell on day " + Net.integer(e, "day", 0)
-				+ " to " + Net.string(e, "cause", "an enemy"), x0, y0 + 13, 0.7F, 0xFFDDDDDD, true);
-		c.text("“" + Net.string(e, "headline", "") + "”", x0, y0 + 22, 0.7F, 0xFFF2C94C, true);
-		List<String> lines = new ArrayList<>();
-		JsonArray arr = e.getAsJsonArray("lines");
-		for (int i = arr.size() - 1; i >= 0; i--) {
-			lines.addAll(c.wrap(arr.get(i).getAsString(), (int) ((x1 - x0) / 0.66F)));
+	private void portrait(Canvas c, JsonObject e, float x0, float y0, float x1, float y1, int color, String role, String state,
+						  double mx, double my, float alpha) {
+		c.fill(x0 - 0.5F, y0 - 0.5F, x1 + 0.5F, y1 + 0.5F, Ui.fade(0xFF050507, alpha));
+		c.gradient(x0, y0, x1, y1, Ui.fade(Ui.opaque(Canvas.mix(color, 0x0A0B13, 0.68F)), alpha), Ui.fade(0xFF07070C, alpha));
+		// a lit floor under the figure
+		float fx = (x0 + x1) / 2;
+		for (int k = 0; k < 6; k++) {
+			float rw = (x1 - x0) * (0.42F - k * 0.05F);
+			c.fill(fx - rw, y1 - 13 + k * 0.6F, fx + rw, y1 - 12.4F + k * 0.6F, Ui.fade(Ui.opaque(Canvas.mix(color, 0xFFFFFF, 0.2F)), alpha * 0.05F * (k + 1)));
 		}
-		chronicleTop = y0 + 36;
-		chronicleBottom = y1;
-		scrolled(c, lines, x0, chronicleTop, x1, chronicleBottom, 0.66F, 0xFFDDD6C4);
+		int eid = Net.integer(e, "eid", -1);
+		boolean drawn = false;
+		if (eid >= 0 && alpha > 0.9F) {
+			c.scissor((int) x0 + 1, (int) y0 + 1, (int) x1 - 1, (int) y1 - 1);
+			drawn = c.entity(eid, (int) x0 + 1, (int) y0 + 4, (int) x1 - 1, (int) y1 - 6, (float) mx, (float) my);
+			c.endScissor();
+		}
+		if (!drawn) {
+			float s = 40;
+			Icons.draw(c, Icons.role(role), fx - s / 2, (y0 + y1) / 2 - s / 2 - 8, s / 16, color, alpha * 0.85F);
+			String caption = switch (state) {
+				case "camp" -> "AT CAMP";
+				case "recovering" -> "RECOVERING";
+				case "away" -> "AWAY";
+				default -> "";
+			};
+			if (!caption.isEmpty()) {
+				Icons.draw(c, Icons.CAMP, fx - 6, y1 - 30, 12 / 16F, 0, alpha);
+				c.centered(caption, fx, y1 - 18, 0.5F, Ui.fade(Ui.DIM, alpha), true);
+			}
+		}
+		c.rect(x0, y0, x1, y1, Ui.fade(Ui.opaque(color), alpha));
+		c.rect(x0 + 1.5F, y0 + 1.5F, x1 - 1.5F, y1 - 1.5F, Ui.fade(0x30FFFFFF, alpha));
+		// level badge on the bottom edge
+		String lv = String.valueOf(Net.integer(e, "lv", 1));
+		float bw = c.textWidth(lv) * 0.7F + 12;
+		float bx = fx - bw / 2;
+		float by = y1 - 6;
+		c.fill(bx - 0.5F, by - 0.5F, bx + bw + 0.5F, by + 11.5F, Ui.fade(0xFF050507, alpha));
+		c.gradient(bx, by, bx + bw, by + 11, Ui.fade(0xFF4A3812, alpha), Ui.fade(0xFF221806, alpha));
+		c.rect(bx, by, bx + bw, by + 11, Ui.fade(Ui.GOLD, alpha));
+		c.centered(lv, fx, by + 2.4F, 0.7F, Ui.fade(Ui.GOLD_HI, alpha), true);
+		if (state.equals("downed")) {
+			float p = Ui.pulse(0.8F);
+			c.rect(x0, y0, x1, y1, Ui.fade(0xFFFF5A50, 0.4F + 0.5F * p));
+			c.centered("DOWNED", fx, y0 + 5, 0.6F, Ui.fade(0xFFFF8A80, alpha), true);
+		}
 	}
 
-	private void scrolled(Canvas c, List<String> lines, float x0, float y0, float x1, float y1, float scale, int color) {
-		float lineH = 9;
-		float maxScroll = Math.max(0, lines.size() * lineH - (y1 - y0));
+	private static void statBar(Canvas c, Icons.Icon icon, String label, String value, float x, float y, float w, float frac, int color,
+								int segments, float alpha) {
+		Icons.draw(c, icon, x, y - 0.5F, 7 / 16F, 0, alpha);
+		c.text(label, x + 9, y, 0.55F, Ui.fade(Ui.DIM, alpha), true);
+		c.text(value, x + w - c.textWidth(value) * 0.55F, y, 0.55F, Ui.fade(Ui.TEXT, alpha), true);
+		Ui.bar(c, x, y + 6.5F, w, 4, frac, 0, color, segments, alpha);
+	}
+
+	private void chronicle(Canvas c, JsonArray arr, float x0, float y0, float x1, float y1, float alpha) {
+		c.text("CHRONICLE", x0, y0, 0.6F, Ui.fade(Ui.GOLD, alpha), true);
+		Ui.rule(c, x0 + c.textWidth("CHRONICLE") * 0.6F + 6, x1, y0 + 2.5F, alpha * 0.8F);
+		float top = y0 + 8;
+		Ui.inset(c, x0, top, x1, y1, 0x30C8A04A, alpha);
+		float scale = 0.6F;
+		float lineH = 7.5F;
+		float textX = x0 + 16;
+		List<String[]> rows = new ArrayList<>();
+		for (int i = arr.size() - 1; i >= 0; i--) {
+			String line = arr.get(i).getAsString();
+			String day = "";
+			String text = line;
+			int colon = line.indexOf(':');
+			if (line.startsWith("Day ") && colon > 0) {
+				day = line.substring(4, colon);
+				text = line.substring(colon + 1).trim();
+			}
+			List<String> wrapped = c.wrap(text, (int) ((x1 - textX - 4) / scale));
+			for (int k = 0; k < wrapped.size(); k++) {
+				rows.add(new String[] {k == 0 ? day : null, wrapped.get(k)});
+			}
+		}
+		float inner = y1 - top - 4;
+		float maxScroll = Math.max(0, rows.size() * lineH - inner);
 		scroll = Math.max(0, Math.min(scroll, maxScroll));
-		c.fill(x0 - 2, y0 - 1, x1, y1, 0x44000000);
-		c.scissor((int) (x0 - 2), (int) y0, (int) x1, (int) y1);
-		float y = y0 + 1 - scroll;
-		for (String line : lines) {
-			if (y > y0 - lineH && y < y1) {
-				c.text(line, x0, y, scale, color, true);
+		c.scissor((int) x0 + 1, (int) top + 1, (int) x1 - 1, (int) y1 - 1);
+		float lineX = x0 + 7;
+		c.fill(lineX - 0.25F, top + 2, lineX + 0.25F, y1 - 2, Ui.fade(0x55C8A04A, alpha));
+		float y = top + 3 - scroll;
+		for (String[] row : rows) {
+			if (y > top - lineH && y < y1) {
+				if (row[0] != null) {
+					Ui.diamond(c, lineX, y + 2.6F, 1, 1.2F, Ui.fade(Ui.GOLD, alpha));
+					if (!row[0].isEmpty()) {
+						String d = "Day " + row[0];
+						c.text(d, textX, y, scale, Ui.fade(Ui.GOLD, alpha), true);
+						c.text(row[1], textX + c.textWidth(d + "  ") * scale, y, scale, Ui.fade(0xFFDDD6C4, alpha), true);
+					} else {
+						c.text(row[1], textX, y, scale, Ui.fade(0xFFDDD6C4, alpha), true);
+					}
+				} else {
+					c.text(row[1], textX, y, scale, Ui.fade(0xFFDDD6C4, alpha), true);
+				}
 			}
 			y += lineH;
 		}
 		c.endScissor();
-	}
-
-	private float wrapped(Canvas c, String text, float x, float y, float width, float scale, int color) {
-		for (String line : c.wrap(text, (int) (width / scale))) {
-			c.text(line, x, y, scale, color, true);
-			y += 8;
+		if (rows.isEmpty()) {
+			c.text("Nothing written yet. Go and make history.", textX, top + 4, scale, Ui.fade(Ui.MUTED, alpha), true);
 		}
-		return y;
 	}
 
-	private void bar(Canvas c, float x, float y, float w, String label, double value, double max, int color, String text) {
-		c.text(label, x, y, 0.6F, 0xFF999999, true);
-		c.fill(x, y + 7, x + w, y + 11, 0xFF22222A);
-		c.fill(x, y + 7, x + (float) (w * Math.max(0, Math.min(1, value / max))), y + 11, color);
-		c.text(text, x + w - c.textWidth(text) * 0.55F, y, 0.55F, 0xFFDDDDDD, true);
+	private void renderFallen(Canvas c, JsonObject e, float x0, float y0, float x1, float y1, float alpha) {
+		int color = Net.integer(e, "col", 0xC8A04A);
+		String role = Net.string(e, "rid", "TANK");
+		float pw = 76;
+		float ph = 70;
+		c.fill(x0 - 0.5F, y0 - 0.5F, x0 + pw + 0.5F, y0 + ph + 0.5F, Ui.fade(0xFF050507, alpha));
+		c.gradient(x0, y0, x0 + pw, y0 + ph, Ui.fade(0xFF1A1A22, alpha), Ui.fade(0xFF07070C, alpha));
+		Icons.draw(c, Icons.role(role), x0 + pw / 2 - 18, y0 + 10, 36 / 16F, 0x8A8698, alpha * 0.7F);
+		Icons.draw(c, Icons.SKULL, x0 + pw / 2 - 6, y0 + ph - 18, 12 / 16F, 0, alpha);
+		c.rect(x0, y0, x0 + pw, y0 + ph, Ui.fade(0xFF5A566A, alpha));
+		float nx = x0 + pw + 8;
+		c.text(Net.string(e, "name", "?"), nx, y0 + 1, 1.25F, Ui.fade(Ui.opaque(Canvas.mix(color, 0xFFFFFF, 0.3F)), alpha), true);
+		c.text(Net.string(e, "cls", "") + "  ·  Level " + Net.integer(e, "lv", 1), nx, y0 + 15, 0.62F, Ui.fade(Ui.DIM, alpha), true);
+		c.text("Fell on day " + Net.integer(e, "day", 0) + " to " + Net.string(e, "cause", "an enemy") + ".", nx, y0 + 25, 0.62F,
+				Ui.fade(0xFFFF9A8E, alpha), true);
+		c.text("“" + Net.string(e, "headline", "") + "”", nx, y0 + 35, 0.6F, Ui.fade(0xFFD8C690, alpha), true);
+		c.text("Remembered.", nx, y0 + 50, 0.6F, Ui.fade(Ui.MUTED, alpha), true);
+		chronicle(c, e.getAsJsonArray("lines"), x0, y0 + ph + 8, x1, y1, alpha);
 	}
 
-	private void button(Canvas c, String label, float x, float y, Runnable action) {
-		float w = c.textWidth(label) * 0.7F + 12;
-		c.fill(x, y, x + w, y + 12, 0xFF2A2410);
-		c.rect(x, y, x + w, y + 12, 0xFFC8A04A);
-		c.centered(label, x + w / 2, y + 3, 0.7F, 0xFFF2C94C, true);
-		buttons.add(new Button(x, y, x + w, y + 12, action));
+	private void footer(Canvas c, JsonObject data, float alpha) {
+		float y = py1 - 14;
+		Icons.draw(c, Icons.order(Net.string(data, "oid", "follow")), px0 + 8, y - 0.5F, 9 / 16F, 0, alpha);
+		String text = Net.string(data, "order", "Follow") + "  ·  " + Net.string(data, "formation", "Line");
+		c.text(text, px0 + 20, y + 1.5F, 0.6F, Ui.fade(0xFFD8D2C2, alpha), true);
+		String keys = "Hold G: command wheel  ·  U: roster";
+		c.text(keys, px0 + 20 + c.textWidth(text) * 0.6F + 12, y + 1.5F, 0.55F, Ui.fade(Ui.MUTED, alpha), true);
+		int regalia = Net.integer(data, "regalia", 0);
+		float right = px1 - 8;
+		if (data.has("permadeath") && data.get("permadeath").getAsBoolean()) {
+			String p = "PERMADEATH";
+			float w = c.textWidth(p) * 0.55F + 8;
+			c.fill(right - w, y - 0.5F, right, y + 9, Ui.fade(0xFF3A1010, alpha));
+			c.rect(right - w, y - 0.5F, right, y + 9, Ui.fade(0xFFE5534B, alpha));
+			c.text(p, right - w + 4, y + 1.8F, 0.55F, Ui.fade(0xFFFF8A80, alpha), true);
+			right -= w + 6;
+		}
+		if (regalia > 0) {
+			String r = "Gilded Regalia " + regalia + "/4";
+			c.text(r, right - c.textWidth(r) * 0.55F, y + 1.8F, 0.55F, Ui.fade(Ui.GOLD, alpha), true);
+		}
+	}
+
+	private void action(Canvas c, String label, float x, float y, boolean danger, double mx, double my, float alpha, Runnable run) {
+		float w = c.textWidth(label) * 0.7F + 16;
+		boolean hover = in(mx, my, x, y, x + w, y + 13);
+		float[] box = Ui.button(c, x, y, label, hover, danger, alpha);
+		buttons.add(new Button(box[0], box[1], box[2], box[3], run));
 	}
 
 	private void send(String type, String id) {
@@ -340,10 +552,10 @@ public final class RosterView {
 	}
 
 	public boolean mouseScrolled(double x, double y, double amount) {
-		if (x < px0 + 134) {
-			listScroll -= (float) amount * 22;
+		if (x < listX1) {
+			listScroll -= (float) amount * 26;
 		} else {
-			scroll -= (float) amount * 18;
+			scroll -= (float) amount * 15;
 		}
 		return true;
 	}

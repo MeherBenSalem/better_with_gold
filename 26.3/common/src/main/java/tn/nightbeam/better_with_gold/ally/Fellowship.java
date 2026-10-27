@@ -58,10 +58,12 @@ public final class Fellowship {
 	public static void serverStopping(MinecraftServer server) {
 		Warbands.stop();
 		Threat.clear();
+		Fx.clear();
 	}
 
 	public static void tick(MinecraftServer server) {
 		Threat.tick(server);
+		Fx.tick(server);
 		Warbands.tick(server);
 		Sellswords.tick(server);
 	}
