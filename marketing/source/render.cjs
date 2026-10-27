@@ -92,12 +92,14 @@ ${transparent ? 'html, body, .stage { background: transparent; }' : ''}</style><
 <body><div class="stage">${body}</div></body></html>`;
 
 const header = (title) => page(1400, 120, `
-  <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:28px;background:linear-gradient(90deg,rgba(0,0,0,0),rgba(12,14,26,.9) 30%,rgba(12,14,26,.9) 70%,rgba(0,0,0,0))">
-    <div class="rule" style="width:300px;transform:scaleX(-1)"></div>
-    <span class="diamond" style="margin:0"></span>
-    <div class="display gold glow" style="font-size:44px;white-space:nowrap">${title}</div>
-    <span class="diamond" style="margin:0"></span>
-    <div class="rule" style="width:300px"></div>
+  <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:22px;background:linear-gradient(90deg,rgba(0,0,0,0),rgba(14,12,20,.92) 26%,rgba(14,12,20,.92) 74%,rgba(0,0,0,0))">
+    <div style="position:absolute;left:18%;right:18%;top:14px;height:1px;background:linear-gradient(90deg,rgba(232,200,114,0),rgba(232,200,114,.45),rgba(232,200,114,0))"></div>
+    <div style="position:absolute;left:18%;right:18%;bottom:14px;height:1px;background:linear-gradient(90deg,rgba(232,200,114,0),rgba(232,200,114,.45),rgba(232,200,114,0))"></div>
+    <div style="display:flex;flex-direction:column;gap:5px;transform:scaleX(-1)"><div class="rule" style="width:290px;height:2px"></div><div class="rule" style="width:200px;opacity:.6"></div></div>
+    <span class="diamond" style="margin:0;width:12px;height:12px;box-shadow:0 0 12px rgba(246,220,148,.8)"></span>
+    <div class="display gold glow" style="font-size:50px;font-weight:700;white-space:nowrap;letter-spacing:.06em;filter:drop-shadow(0 2px 0 #000) drop-shadow(0 0 18px rgba(232,200,114,.45))">${title}</div>
+    <span class="diamond" style="margin:0;width:12px;height:12px;box-shadow:0 0 12px rgba(246,220,148,.8)"></span>
+    <div style="display:flex;flex-direction:column;gap:5px"><div class="rule" style="width:290px;height:2px"></div><div class="rule" style="width:200px;opacity:.6"></div></div>
   </div>`, true);
 
 // A class emblem: a dark diamond tile with the class colour and its pixel icon.

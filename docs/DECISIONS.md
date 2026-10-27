@@ -50,22 +50,33 @@ at the bottom of each section.
   leader; the Golden Fish fully heals an ally and adds 30 morale.
 - **RPG Attribute System is optional.** Through its public `RasApi.getLevel`, allies cannot out-level their
   leader's RPG level (minimum 5). Allies' kills credit the leader (`setLastHurtByPlayer`), so vanilla experience
-  and player-only drops still happen.
+  and drops that need a player kill still happen.
 
 ## Presentation
 
 - **Effects are server-side vanilla particles and sounds**, played by a small scheduler (`ally/Fx.java`) that runs
   an animation one frame per tick. Every client sees them with no resource pack and no client code, on every
-  version. Effects only use particle types that exist unchanged from 1.20.1 to 26.3.
+  version. Every particle type they use exists unchanged from 1.20.1 to 26.3.
 - **GUI art is drawn, not shipped as sprites**, except the command wheel. Icons are 16x16 pixel art authored in
   `tools/gen_icons.py` and drawn as coloured squares on the shared Canvas, so they are crisp at every GUI scale and
   identical on every version. The wheel's slices are smooth 512x512 textures from `tools/gen_gui.py`, drawn
-  rotated: 26.x GUI rendering only draws (transformed) rectangles, so a texture is the clean way to get curved
+  rotated: 26.x GUI rendering draws nothing but (transformed) rectangles, so a texture is the clean way to get curved
   slices on all four versions.
 - **Skins and item icons are generated** by `tools/gen_textures.py` (materials, then details, then one lighting
   pass), so a palette change or a new variant is one edit and the output is reproducible.
 - **The roster portrait is the real entity**, drawn with each version's inventory-portrait call; its name tag is
   hidden for the draw. Allies at camp or away show their class emblem instead.
+
+## Testing
+
+- **One play-through for all nine builds.** `tools/qa/fellowship_checks.py` runs the same 15 checks (recruiting,
+  following in formation, aggro labels, combat, downed and revived, the command wheel, the Warbanner) on a dev
+  server and a real client under Xvfb, on every version and loader. All nine pass.
+- **The QA RCON client waits for a marker reply.** Forge 1.21.1's RCON sends no packet at all for a command with no
+  output, and the order and formation commands answer in the action bar, so a plain request/reply client hung. A
+  request of an unknown type follows each command; every server answers it after the command's own reply.
+- **26.3 NeoForge declares the icon with `iconFile`.** With `logoFile`, NeoForge for 26.3 shows a warning screen on
+  every launch. 26.2 NeoForge and the older loaders do not know `iconFile`, so they keep `logoFile`.
 
 ## Scope (cut from the bottom)
 

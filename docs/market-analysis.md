@@ -18,7 +18,7 @@ NeoForge, Forge), 26.2 and 26.3 (Fabric, NeoForge). No dependencies except Fabri
 - **Versions and loaders** come from each project's version or file list, not from the description, unless noted.
   "26.x search" means a Modrinth search filtered to mods tagged 26.1.2, 26.2 or 26.3.
 - **Complaints** come from GitHub issue and pull-request pages, mod descriptions and FAQs, and from add-ons that exist
-  only to patch a gap (an add-on's downloads are used as a demand signal). The GitHub REST API was blocked for this
+  just to patch a gap (an add-on's downloads are used as a demand signal). The GitHub REST API was blocked for this
   session, so issue pages were read on github.com directly. **Villager Recruits has GitHub Issues turned off**, so its
   evidence comes from its pull requests and add-ons. CurseForge comment threads load through JavaScript and are **not**
   covered.
@@ -29,8 +29,8 @@ NeoForge, Forge), 26.2 and 26.3 (Fabric, NeoForge). No dependencies except Fabri
 ## TL;DR
 
 1. **The ally category is large, and its leaders stop before 26.x.**
-   - Human Companions: 17.4M CurseForge downloads, Forge only, newest 1.20.1, last file 2024-12-15.
-   - Villager Recruits: 2.89M CurseForge and 467k Modrinth, Forge only, newest 1.20.1. Three NeoForge 1.21.1 port pull
+   - Human Companions: 17.4M CurseForge downloads, Forge alone, newest 1.20.1, last file 2024-12-15.
+   - Villager Recruits: 2.89M CurseForge and 467k Modrinth, Forge alone, newest 1.20.1. Three NeoForge 1.21.1 port pull
      requests are unmerged; the latest was closed on 2026-10-24.
    - MineColonies (89.8M CF, up to 1.21.1), Modern Companions (Human Companions' NeoForge 1.21.1 port), Taterzens (up
      to 1.21.6) and Mebahel's Villager Quests & Companions (up to 1.21.1) have no 26.x build either.
@@ -39,10 +39,10 @@ NeoForge, Forge), 26.2 and 26.3 (Fabric, NeoForge). No dependencies except Fabri
    Mob), a single romance companion (Girlfriend Mod) and two tiny Fabric recruit mods (Champion Companions, 104
    downloads; Mercenaries, 84). As of 2026-10-27 **we found no 26.2/26.3 mod where you recruit, level and command a
    party of classed adventurers**, and none on Fabric and NeoForge together.
-2. **Roles exist, but only in pieces.** Modern Companions (NeoForge 1.21.1) already has a Vanguard with "monster
+2. **Roles exist, but in pieces.** Modern Companions (NeoForge 1.21.1) already has a Vanguard with "monster
    taunts", a healing Cleric, a Necromancer, 14 traits, Morale, Bond and a stats Journal. Millager (26.2) has a taunting
    Rioter and a Lancer with a healing aura, but they are a village army, not your party. Fellowship must not be
-   pitched as the first tank/healer setup. Its distinct parts are: an aggro table you can see over every engaged mob,
+   pitched as a new tank/healer setup. Its distinct parts are: an aggro table you can see over every engaged mob,
    a downed state for allies, a command wheel with formations and a Warbanner, and one dependency-free feature set
    on nine loader and version combinations.
 3. **The same complaints repeat across mods** (section 2):
@@ -53,16 +53,16 @@ NeoForge, Forge), 26.2 and 26.3 (Fabric, NeoForge). No dependencies except Fabri
    - Mods are stuck on old versions.
    - Commands are buried in inventory screens.
 
-   Demand signals: Companion (2.14M MR) and Followers Teleport Too (490k MR) exist only to keep pets with you. Aggro
+   Demand signals: Companion (2.14M MR) and Followers Teleport Too (490k MR) exist just to keep pets with you. Aggro
    Indicator (336k MR) shows which mobs target you. The revive mods (Hardcore Revival 10.2M MR, PlayerRevive 4.80M
-   MR) only cover players.
+   MR) cover players and nobody else.
 4. **It fits the studio without code coupling.** Remnants | RPG Mobs, Remnants | Skills and Powers and Mob Loot Bags
    all recognise "your ally" through vanilla `OwnableEntity#getOwnerUUID` (checked in their source). If Fellowship
    allies implement it, they skip RPG Mobs levelling, are spared and buffed by Skills and Powers, and give Loot Bag
    kill credit, all with no new code in those mods. One term clashes: RPG Mobs already uses "threat" for an area's
    danger level (`/remnants threat`). Call Fellowship's system **aggro** in the UI.
 5. **Name:** **Remnants | Fellowship**, with conditions (section 5). It is clean as a Minecraft mod title: 0 mods on
-   Modrinth, only small modpacks on either site, and no Minecraft mod repository on GitHub. Outside Minecraft,
+   Modrinth, a few small modpacks on either site, and no Minecraft mod repository on GitHub. Outside Minecraft,
    *Fellowship* is a 2025 Steam game (Chief Rebel) built on DPS/Tank/Healer heroes. "Retinue" collides inside the
    niche (a paid Minecraft companion plugin and a Hytale companion mod). "Oathsworn" collides with *Oathsworn
    Paladins* (445k CF).
@@ -79,9 +79,9 @@ NeoForge, Forge), 26.2 and 26.3 (Fabric, NeoForge). No dependencies except Fabri
 |---|---|---|---|---|---|
 | **Human Companions** (justinwon777) | Forge | 1.16.5, 1.18.2, 1.19.2, 1.20.1. Last file 2024-12-15. | No | 17,429,599 / not on MR (issue [#57](https://github.com/justinwon777/HumanCompanions/issues/57) asks) | None found (?) ([CF](https://www.curseforge.com/minecraft/mc-mods/human-companions)) |
 | **Villager Recruits** (talhanation) | Forge | CF 1.16.3 → 1.20.1; MR 1.18.2 → 1.20.1. Latest 1.15.2 (2026-06-29). | No. NeoForge 1.21.1 port PRs [#68](https://github.com/talhanation/recruits/pull/68), [#77](https://github.com/talhanation/recruits/pull/77), [#78](https://github.com/talhanation/recruits/pull/78) are unmerged | 2,887,572 / 467,047 | None listed on MR. PR #77 says "corelib bundled", so 1.20.1 may need talhanation's CoreLib (**unverified**) ([MR](https://modrinth.com/mod/villager-recruits)) |
-| **Modern Companions** (Modern-Mods), a port and rebrand of Human Companions | NeoForge | 1.21.1 only. Latest 4.60 on CF (2026-08-25). | No | 24,678 / 10,504 | None. Optional: Iron's Spells, Ars Nouveau, TacZ, Curios, Sophisticated Backpacks ([MR](https://modrinth.com/mod/modern-companions)) |
+| **Modern Companions** (Modern-Mods), a port and rebrand of Human Companions | NeoForge | 1.21.1 alone. Latest 4.60 on CF (2026-08-25). | No | 24,678 / 10,504 | None. Optional: Iron's Spells, Ars Nouveau, TacZ, Curios, Sophisticated Backpacks ([MR](https://modrinth.com/mod/modern-companions)) |
 | **MineColonies** (LDTTeam), a colony builder | Forge, NeoForge | Up to 1.21.1 (latest file 2026-10-21) | No | 89,778,894 / 34,507 (an old 1.18.2 MR listing) | Not checked ([CF](https://www.curseforge.com/minecraft/mc-mods/minecolonies)) |
-| **Guard Villagers** (seymourimadeit) | Forge, NeoForge | 1.14.4 → **26.3**; 26.x is NeoForge only | Yes (NeoForge) | 93,142,609 / 13,971,414 | None ([MR](https://modrinth.com/mod/guard-villagers)) |
+| **Guard Villagers** (seymourimadeit) | Forge, NeoForge | 1.14.4 → **26.3**; 26.x is NeoForge alone | Yes (NeoForge) | 93,142,609 / 13,971,414 | None ([MR](https://modrinth.com/mod/guard-villagers)) |
 | Guard Villagers (Fabric/Quilt), a separate port | Fabric, Quilt | 1.18.2 → **26.2** | Yes (Fabric) | – / 5,630,754 | None ([MR](https://modrinth.com/mod/guard-villagers-fabricquilt)) |
 | **Taterzen NPCs** (samolego), a server NPC tool | Fabric (Forge to 1.19, Quilt to 1.20.1) | 1.16.5 → 1.21.6. Last update 2025-06-26. | No | not found / 136,206 | Fabric API. Entity-type editing depends on the abandoned DisguiseLib ([#171](https://github.com/samolego/Taterzens/issues/171)) |
 | **Easy NPC** (MarkusBordihn), an NPC authoring tool | Fabric, Forge, NeoForge, Quilt | 1.18.2 → **26.3** | Yes | 8,735,480 / 1,290,493 | Easy NPC: Core and Easy NPC: Config UI ([MR](https://modrinth.com/mod/easy-npc)) |
@@ -89,16 +89,16 @@ NeoForge, Forge), 26.2 and 26.3 (Fabric, NeoForge). No dependencies except Fabri
 | **Millager (Village Defenders)** (LZYZL6) | Fabric, NeoForge (Forge to 1.20.1) | 1.20.1 → **26.2** | Yes | 101,151 / 29,828 | Fabric API ([MR](https://modrinth.com/mod/millager)) |
 | **Petting - Tame any mob!** (yigitguven) | NeoForge, Forge (Fabric to 1.20.1) | 1.19.4 → **26.3** | Yes (NeoForge, Forge) | 137,486 / 33,966 | None ([MR](https://modrinth.com/mod/petting)) |
 | **Girlfriend Mod**, one companion NPC | Fabric, NeoForge | 1.21.9 → **26.3** | Yes | CF not checked / 44,649 | Fabric API ([MR](https://modrinth.com/mod/girlfriend)) |
-| Champion Companions | Fabric | **26.2** only | Yes | – / 104 | Fabric API, GeckoLib ([MR](https://modrinth.com/mod/champion-companions)) |
-| Mercenaries (Kniumm), "alpha quality" | Fabric | **26.2** only | Yes | – / 84 | Fabric API ([MR](https://modrinth.com/mod/mercenaries)) |
-| Companion 🐕 (snownee), keeps pets safe | Fabric, Forge, NeoForge, Quilt | 1.18.2 → 26.1.2 | 26.1.2 only (no 26.2/26.3) | – / 2,139,681 | Kiwi ([MR](https://modrinth.com/mod/companion)) |
+| Champion Companions | Fabric | **26.2** alone | Yes | – / 104 | Fabric API, GeckoLib ([MR](https://modrinth.com/mod/champion-companions)) |
+| Mercenaries (Kniumm), "alpha quality" | Fabric | **26.2** alone | Yes | – / 84 | Fabric API ([MR](https://modrinth.com/mod/mercenaries)) |
+| Companion 🐕 (snownee), keeps pets safe | Fabric, Forge, NeoForge, Quilt | 1.18.2 → 26.1.2 | 26.1.2 (no 26.2/26.3) | – / 2,139,681 | Kiwi ([MR](https://modrinth.com/mod/companion)) |
 | **Followers Teleport Too** (Serilum) | Fabric, Forge, NeoForge, Quilt | 1.16.5 → **26.3** | Yes | not checked / 489,841 | Collective ([MR](https://modrinth.com/mod/followers-teleport-too)) |
 | **Aggro Indicator** (Raverbury) | Fabric, NeoForge (Forge to 1.20.6) | 1.16.5 → **26.2** | Yes (no 26.3) | not found / 336,243 | Fabric API ([MR](https://modrinth.com/mod/aggroindicator)) |
 | **Better Party** (MrStilu2k6), player parties | Fabric, Forge, NeoForge | 1.20.1 → **26.3** | Yes | 16,565 / 11,039 | Fabric API ([MR](https://modrinth.com/mod/better-party)) |
-| Other player-party mods: Epic RPG: Party Hud; Odyssey Allies | Forge/NeoForge; all three loaders | 1.20.1 → 26.1.2; 1.20 → 1.21 | 26.1.2 only; No | – / 16,299; 1,032,800 / 1,169,059 | None; Resourceful Lib |
-| **Hardcore Revival** (BlayTheNinth), players only | Fabric, NeoForge (Forge to 1.21.11) | 1.12 → **26.3** | Yes | 7,540,065 / 10,213,685 | Balm, plus Fabric API on Fabric ([MR](https://modrinth.com/mod/hardcore-revival)) |
-| **PlayerRevive** (CreativeMD), players only | Forge, NeoForge | 1.18.2 → **26.3** (NeoForge) | Yes | not checked / 4,797,964 | CreativeCore ([MR](https://modrinth.com/mod/playerrevive)) |
-| Incapacitated, players only | Fabric, Forge, NeoForge, Quilt | 1.16.5 → 1.21.8 | No | 733,003 / 199,046 | None |
+| Other player-party mods: Epic RPG: Party Hud; Odyssey Allies | Forge/NeoForge; all three loaders | 1.20.1 → 26.1.2; 1.20 → 1.21 | 26.1.2; No | – / 16,299; 1,032,800 / 1,169,059 | None; Resourceful Lib |
+| **Hardcore Revival** (BlayTheNinth), players alone | Fabric, NeoForge (Forge to 1.21.11) | 1.12 → **26.3** | Yes | 7,540,065 / 10,213,685 | Balm, plus Fabric API on Fabric ([MR](https://modrinth.com/mod/hardcore-revival)) |
+| **PlayerRevive** (CreativeMD), players alone | Forge, NeoForge | 1.18.2 → **26.3** (NeoForge) | Yes | not checked / 4,797,964 | CreativeCore ([MR](https://modrinth.com/mod/playerrevive)) |
+| Incapacitated, players alone | Fabric, Forge, NeoForge, Quilt | 1.16.5 → 1.21.8 | No | 733,003 / 199,046 | None |
 | *Ours today:* Better With Gold | Fabric, Forge, NeoForge | 1.16.5 → **26.3** | Yes | 6,916 / 1,889 | – ([CF](https://www.curseforge.com/minecraft/mc-mods/better-with-gold), [MR](https://modrinth.com/mod/better-with-gold)) |
 
 Recruits add-ons (demand signals, all Forge 1.20.1):
@@ -118,7 +118,7 @@ Key: ✔ yes · ✖ no · ~ partial or through an add-on · ? not found or **unv
 |---|---|---|---|---|---|---|---|---|---|
 | Human Companions | Give the food a wild companion asks for, at its house | ~ Knight, Archer, Axeguard, Arbalist. No tank or healer | ✔ Levels from kills; +1 health every 3 levels | ~ Random names; rename with tags | ✖ "they die easily"; dupes and lost items on death (listed known issue, [#26](https://github.com/justinwon777/HumanCompanions/issues/26), [#37](https://github.com/justinwon777/HumanCompanions/issues/37)) | ~ Toggles inside the inventory: follow, patrol, guard, hunt, alert; shift-click to sit | ✖ Attacks what hurts you or what you hit; runs from creepers | ✖ [#13](https://github.com/justinwon777/HumanCompanions/issues/13) portals, [#14](https://github.com/justinwon777/HumanCompanions/issues/14) boats. The page suggests a separate Pet Tracker mod | [#31](https://github.com/justinwon777/HumanCompanions/issues/31) one companion pushed the server to 90–120% CPU (fixed) |
 | Villager Recruits | Emeralds; a Noble Villager recruits nearby villagers ([wiki](https://github.com/talhanation/wiki/wiki/Villager-Recruits-Wiki)) | ~ Recruit, Shieldman, Bowman, Crossbowman, Horseman, Nomad. They block with shields and eat food or potions | ? Not on the listing or wiki | ? | ? | ✔ Command screen: Move, Follow me, Hold, Back to position, Protect this, Hail of arrows, Shields; stances; groups. ~ Formations and morale come from add-ons | ✖ | ~ An add-on adds anti-stuck teleport | Async pathfinding ([PR #23](https://github.com/talhanation/recruits/pull/23)); authority-hardening PRs [#62](https://github.com/talhanation/recruits/pull/62)–#66 still open |
-| Modern Companions | Bring the 2 requested stacks to a companion house | ✔ 14 roles, including Vanguard ("monster taunts"), Cleric (heals allies), Alchemist and Necromancer | ✔ STR/DEX/INT/END; "No Level Cap" | ✔ 14 traits, backstory, Morale, Bond, and a Journal of kills, resurrections and distance | ~ A Resurrection Scroll, activated with a Nether Star | ~ Companion screen: Follow, Patrol, Guard, Alert, Hunting, Sprint, Pickup, Radius | ~ Vanguard taunts; we found no aggro display (?) | ~ Summoning Wand recalls companions "in the current dimension"; Soul Gems store them | NeoForge 1.21.1 only; friendly fire and PvP are configurable |
+| Modern Companions | Bring the 2 requested stacks to a companion house | ✔ 14 roles, including Vanguard ("monster taunts"), Cleric (heals allies), Alchemist and Necromancer | ✔ STR/DEX/INT/END; "No Level Cap" | ✔ 14 traits, backstory, Morale, Bond, and a Journal of kills, resurrections and distance | ~ A Resurrection Scroll, activated with a Nether Star | ~ Companion screen: Follow, Patrol, Guard, Alert, Hunting, Sprint, Pickup, Radius | ~ Vanguard taunts; we found no aggro display (?) | ~ Summoning Wand recalls companions "in the current dimension"; Soul Gems store them | NeoForge 1.21.1 alone; friendly fire and PvP are configurable |
 | Guard Villagers | 6 spawn per village; convert a nitwit with a sword or crossbow | ~ Sword or crossbow; clerics heal guards | ✖ | ✖ | ✖ | ~ Patrol. **Follow needs Hero of the Village** (or ring the bell) | ✖ | ? [#248](https://github.com/seymourimadeit/guardvillagers/issues/248) a following guard vanished | The FAQ answers "How do I make the mod less laggy?"; [#170](https://github.com/seymourimadeit/guardvillagers/issues/170) TPS buildup with about 8 guards (fixed) |
 | Mebahel's Quests & Companions | Story outcomes (Rusk, Merrin) | ✖ Named characters | ? | ✔ Named, story-driven | ? Heals 10 s after combat | ✔ Follow, wait, return home, guard area, 3 stances | ✖ | ? | Story progress can be per player or shared |
 | Millager | Muster Orders summon a 3–5 unit squad; Profession Orders convert a villager | ✔ 8 units, including Rioter (taunts), Lancer (healing aura) and Doctor (builds golems) | ? | ✖ | ✖ | ~ Items and orders; raid squads advance in formation behind a banner leader | ~ Rioter taunts | ? | Village side, not a personal party |
@@ -126,20 +126,20 @@ Key: ✔ yes · ✖ no · ~ partial or through an add-on · ? not found or **unv
 | Girlfriend Mod | One companion | ✖ | ✔ Relationship tiers | ✔ Chat, emotes, gifts | ~ At the top tier she "pulls you back from death" once a day (the player, not her) | ~ Chat: stay, follow | ✖ | ✔ "runs back to you" | One NPC per player |
 | Champion Companions | Defeat a wild champion to recruit it | ✔ 4 champions: support, kiter, melee, mage | ✔ To level 18, abilities rank up | ~ Codex | ? | ? | ? | ? | 26.2 Fabric, 104 downloads |
 | Easy NPC | You author NPCs | ~ Any, by configuration | ✖ | ✔ Dialogue | ? | ~ Objectives (follow, attack); requests for command control ([#694](https://github.com/MarkusBordihn/BOs-Easy-NPC/issues/694), [#761](https://github.com/MarkusBordihn/BOs-Easy-NPC/issues/761)) | ✖ | ? | [#857](https://github.com/MarkusBordihn/BOs-Easy-NPC/issues/857) save stalls with 327+ NPCs (fixed 2026-10-23) |
-| Better Party / Party Hud / Odyssey Allies | Players only | ~ Leader, Officer, Member (permissions) | ~ Nearby XP sharing | – | – | – | – | – | Better Party has friendly-fire protection for players |
+| Better Party / Party Hud / Odyssey Allies | Players alone | ~ Leader, Officer, Member (permissions) | ~ Nearby XP sharing | – | – | – | – | – | Better Party has friendly-fire protection for players |
 | Aggro Indicator | – | – | – | – | – | – | ✔ An icon over mobs targeting **you**, plus an alert sound | – | Needed on both sides; [#4](https://github.com/Raverbury/AggroIndicator/issues/4) missed modded mobs |
-| Hardcore Revival / PlayerRevive / Incapacitated | Players only | – | – | – | ✔ Downed state, bleed-out timer, revive by a friend | – | – | – | Hardcore Revival [#105](https://github.com/TwelveIterations/HardcoreRevival/issues/105) "make mobs ignore you when downed"; [#38](https://github.com/TwelveIterations/HardcoreRevival/issues/38) mobs cancel the revive timer |
+| Hardcore Revival / PlayerRevive / Incapacitated | Players alone | – | – | – | ✔ Downed state, bleed-out timer, revive by a friend | – | – | – | Hardcore Revival [#105](https://github.com/TwelveIterations/HardcoreRevival/issues/105) "make mobs ignore you when downed"; [#38](https://github.com/TwelveIterations/HardcoreRevival/issues/38) mobs cancel the revive timer |
 
 ### 1c. The 26.2 / 26.3 landscape
 
 | Need | What exists on 26.x (2026-10-27) | Gap |
 |---|---|---|
-| Hire and lead a party of named, classed adventurers | Guard Villagers (NeoForge 26.3; Fabric port 26.2): follow only with Hero of the Village. Millager (26.2): village squads summoned by Muster Orders. Girlfriend Mod: one companion. Champion Companions (Fabric 26.2, 104 downloads, needs GeckoLib). Mercenaries (Fabric 26.2, 84, alpha). Easy NPC: an authoring tool. 26.x searches for "hireling", "mercenary", "bodyguard", "knight companion", "barracks" and "adventurer guild" return 0 relevant mods | We found no Fabric + NeoForge 26.2/26.3 mod with recruitable allies who level and have classes. Recruits, Human Companions, Modern Companions, MineColonies, Taterzens and Mebahel's are all absent |
-| Tank/healer/damage roles and aggro | Aggro Indicator (26.2, your own aggro only); Radial Aggro Indicator (26.1.2); Millager's taunting Rioter and healing Lancer; Champion Companions' support and kiter. Searches for "taunt", "tank healer" and "healer" return 0 relevant mods | We found no party-wide aggro table with a visible label over mobs |
-| Downed instead of dead | Hardcore Revival, PlayerRevive and Simple Revive (all 26.3): players only. Petting's collar respawn: a pet teleports home, with no downed phase. "revived pet" (7.5k): a dropped collar revives a wolf or cat | We found no downed state for NPC allies |
+| Hire and lead a party of named, classed adventurers | Guard Villagers (NeoForge 26.3; Fabric port 26.2): follow just with Hero of the Village. Millager (26.2): village squads summoned by Muster Orders. Girlfriend Mod: one companion. Champion Companions (Fabric 26.2, 104 downloads, needs GeckoLib). Mercenaries (Fabric 26.2, 84, alpha). Easy NPC: an authoring tool. 26.x searches for "hireling", "mercenary", "bodyguard", "knight companion", "barracks" and "adventurer guild" return 0 relevant mods | We found no Fabric + NeoForge 26.2/26.3 mod with recruitable allies who level and have classes. Recruits, Human Companions, Modern Companions, MineColonies, Taterzens and Mebahel's are all absent |
+| Tank/healer/damage roles and aggro | Aggro Indicator (26.2, just your own aggro); Radial Aggro Indicator (26.1.2); Millager's taunting Rioter and healing Lancer; Champion Companions' support and kiter. Searches for "taunt", "tank healer" and "healer" return 0 relevant mods | We found no party-wide aggro table with a visible label over mobs |
+| Downed instead of dead | Hardcore Revival, PlayerRevive and Simple Revive (all 26.3): players alone. Petting's collar respawn: a pet teleports home, with no downed phase. "revived pet" (7.5k): a dropped collar revives a wolf or cat | We found no downed state for NPC allies |
 | Keeping followers with you | Followers Teleport Too and GUI Followers (26.3; need Collective); Wolf Whistle (Fabric 26.2, 462 downloads) recalls a wolf "even across dimensions". Companion stops at 26.1.2 | These cover tamed animals; coverage of modded NPC allies is **unverified** |
-| Commanding allies | Wolf Whistle: a radial menu for one wolf. Petting: collar modes. Millager: order items. "formation" on 26.x finds only structure mods; "command wheel" finds client macro wheels (Orbit, Easy Macros) | We found no command wheel or formations for a party of allies |
-| Player parties | Better Party (26.3, all loaders); Party Hud (NeoForge 26.1.2) | Players only. Complementary: a party member's allies should count as friendly (section 3) |
+| Commanding allies | Wolf Whistle: a radial menu for one wolf. Petting: collar modes. Millager: order items. "formation" on 26.x finds structure mods and nothing else; "command wheel" finds client macro wheels (Orbit, Easy Macros) | We found no command wheel or formations for a party of allies |
+| Player parties | Better Party (26.3, all loaders); Party Hud (NeoForge 26.1.2) | Players alone. Complementary: a party member's allies should count as friendly (section 3) |
 
 ---
 
@@ -157,12 +157,12 @@ Ranked by how often the problem appears across mods and how strong the evidence 
      and teleports recruits stuck for 7 seconds ([No More Fool Recruits](https://modrinth.com/mod/no-more-fool-recruits)).
    - Demand: [Companion](https://modrinth.com/mod/companion) (2,139,681 MR) forces pets to "teleport to you if it is
      about to be unloaded"; [Followers Teleport Too](https://modrinth.com/mod/followers-teleport-too) (489,841 MR) and
-     [GUI Followers](https://modrinth.com/mod/gui-followers) (143,126 MR) exist only to keep followers with you.
+     [GUI Followers](https://modrinth.com/mod/gui-followers) (143,126 MR) exist just to keep followers with you.
 2. **Death is cheap or final, with nothing in between.**
    - Human Companions: "don't recommend storing valuables in them as they die easily" (listing); "set their respawn to
      beds" ([#9](https://github.com/justinwon777/HumanCompanions/issues/9)); "companions will lose AI after
      resurrection" ([#35](https://github.com/justinwon777/HumanCompanions/issues/35)).
-   - Modern Companions brings an ally back only through a Resurrection Scroll plus a Nether Star.
+   - Modern Companions brings an ally back through nothing but a Resurrection Scroll plus a Nether Star.
    - Players clearly like a downed phase (Hardcore Revival 10.2M MR / 7.5M CF; PlayerRevive 4.8M MR), but every
      revive mod we found is for players.
    - Lessons from those mods: "make mobs ignore you when downed" ([#105](https://github.com/TwelveIterations/HardcoreRevival/issues/105))
@@ -201,9 +201,9 @@ Ranked by how often the problem appears across mods and how strong the evidence 
    - Villager Recruits: formations and cleaner army control come from add-ons (Advanced Grouping, 8,249 CF). A
      community "Recruits Addon" with LINE/SQUARE/CIRCLE/WEDGE formations is described on ModpackIndex (**unverified**).
      Another add-on fixes the Move command breaking when pointed at a wall.
-7. **No real roles in most mods.** Human Companions, Guard Villagers and Recruits only have fighter types. The demand
+7. **No real roles in most mods.** Human Companions, Guard Villagers and Recruits have fighter types and nothing else. The demand
    shows in Modern Companions adding a Vanguard and a Cleric, in the [Recruits Morale Addon](https://www.curseforge.com/minecraft/mc-mods/recruits-morale-addon)
-   (6,271 CF), and in [Taunt RPG](https://modrinth.com/mod/taunt-rpg) (385 MR), a horn that exists only to pull aggro
+   (6,271 CF), and in [Taunt RPG](https://modrinth.com/mod/taunt-rpg) (385 MR), a horn that exists just to pull aggro
    for tanks.
 8. **Friendly fire and safety.**
    - Human Companions: "Friendly fire = off doesn't work?" ([#27](https://github.com/justinwon777/HumanCompanions/issues/27)).
@@ -218,7 +218,7 @@ Ranked by how often the problem appears across mods and how strong the evidence 
    - Easy NPC: "Security config is not intuitive" (#733).
 10. **Dependency chains and bridges.**
     - Taterzens loses entity-type editing to the abandoned DisguiseLib ([#171](https://github.com/samolego/Taterzens/issues/171)).
-    - Mebahel's runs on Forge/NeoForge only through Sinytra Connector.
+    - Mebahel's runs on Forge/NeoForge through Sinytra Connector and no other way.
     - Followers Teleport Too needs Collective, Companion needs Kiwi, Champion Companions needs GeckoLib, and [Companions!](https://modrinth.com/mod/companions-mod)
       (tamable creatures; 2,535,692 CF / 210,486 MR) needs GeckoLib and Knight Lib.
     - The Minions datapack-mod warns that TimeLib, its core dependency, was archived on 2025-09-27.
@@ -228,11 +228,11 @@ Ranked by how often the problem appears across mods and how strong the evidence 
 
 ## 3. What this means for the design
 
-Each row names the gap it answers. Claim a row in marketing only once it ships.
+Each row names the gap it answers. Claim a row in marketing once it ships, never before.
 
 | Gap | Design response |
 |---|---|
-| 1. Lost followers | Allies travel through portals with you. Stranded or unloaded allies teleport back, with no item loss. Roster data lives with the owner, so allies survive relogs, restarts and chunk unloads. Write roster data only when it changes (the Easy NPC #857 lesson) |
+| 1. Lost followers | Allies travel through portals with you. Stranded or unloaded allies teleport back, with no item loss. Roster data lives with the owner, so allies survive relogs, restarts and chunk unloads. Write roster data when it changes, never every tick (the Easy NPC #857 lesson) |
 | 2. Death | Downed state with a revive ring and a bleed-out timer. Mobs drop downed allies from their aggro table, and a hit does not reset revive progress (Hardcore Revival #105, #38). Permadeath and the Remembrance list are off by default |
 | 3. Targeting | The aggro table covers any `Enemy` or any mob targeting the party, so modded mobs are included. Never attack the owner, party members, their allies or villagers. Clear stale targets (Human Companions' "shoot at nothing") |
 | 4. Performance | Hard per-owner and per-world caps. Stagger target scans and path recalculation over a tick budget. Cache line of sight |
@@ -241,7 +241,7 @@ Each row names the gap it answers. Claim a row in marketing only once it ships.
 | 7. Roles | Vanguard taunt, Mender heal and revive, Ranger kite, and an aggro label over each engaged mob |
 | 8. Friendly fire | Allies never damage the owner, party members, other allies or villagers by default; a config controls it |
 | 9. Authority | Every command packet is resolved on the server against owned allies. Admin tools need operator permission |
-| 10. Dependencies | Fabric API only, and only on Fabric |
+| 10. Dependencies | Fabric API on Fabric, nothing else |
 | 11. Items | Ally equipment is stored once on the server and dropped or returned exactly once |
 
 ---
@@ -250,9 +250,9 @@ Each row names the gap it answers. Claim a row in marketing only once it ships.
 
 ### 4a. How Fellowship differs from the nearest mods
 
-| Versus | What they already do well | Where Fellowship differs (only once shipped) |
+| Versus | What they already do well | Where Fellowship differs (once shipped) |
 |---|---|---|
-| **Modern Companions** (closest in features) | 14 roles including a taunting Vanguard and a healing Cleric; traits, Morale, Bond and a stats Journal; deep gear and backpack support | Runs on Fabric and on 26.2/26.3, not only NeoForge 1.21.1. Downed state instead of a Nether-Star scroll. A visible aggro label. A command wheel with formations and a Warbanner. A Chronicle of sentences from events, not only counters. **Do not** claim the Vanguard or taunt as new; "Vanguard" is also their class name |
+| **Modern Companions** (closest in features) | 14 roles including a taunting Vanguard and a healing Cleric; traits, Morale, Bond and a stats Journal; deep gear and backpack support | Runs on Fabric and on 26.2/26.3, not just NeoForge 1.21.1. Downed state instead of a Nether-Star scroll. A visible aggro label. A command wheel with formations and a Warbanner. A Chronicle of sentences from events, not just counters. **Do not** claim the Vanguard or taunt as new; "Vanguard" is also their class name |
 | **Villager Recruits** | Armies, factions, claims, sieges, diplomacy, groups | A small RPG party, not an army sim. Roles, aggro and revives. Multi-loader and 26.x. Do not compete on sieges or diplomacy |
 | **Human Companions** | Simple charm: find a house, feed, recruit | Allies that do not get lost and do not die outright, with roles and a performance budget |
 | **Guard Villagers / Millager** | Village defence and village armies | A personal party that you hire and that levels with you |
@@ -360,9 +360,9 @@ Related terms:
 - **Unverified:**
   - Villager Recruits: levels, death, portal behaviour and the CoreLib requirement.
   - Whether Modern Companions uses an aggro table behind its taunt.
-  - The "Recruits Addon" formations (ModpackIndex summary only).
+  - The "Recruits Addon" formations (seen in a ModpackIndex summary, not the mod itself).
   - The BuiltByBit "Retinue" plugin details (page returned 403).
-  - The owner and status of US trademark application 97629701 (seen only in a search-result snippet).
+  - The owner and status of US trademark application 97629701 (seen in a search-result snippet, nowhere else).
   - "Fellowship Tweaks" downloads.
   - Whether Followers Teleport Too moves modded NPC allies.
   - Eclipsed Realm and Much More Dungeons kill hooks.
