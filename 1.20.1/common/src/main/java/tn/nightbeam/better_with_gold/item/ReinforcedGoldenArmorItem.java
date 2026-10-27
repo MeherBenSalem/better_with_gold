@@ -56,6 +56,13 @@ public abstract class ReinforcedGoldenArmorItem extends ArmorItem {
 		}, type, properties);
 	}
 
+	@Override
+	public void appendHoverText(ItemStack stack, net.minecraft.world.level.Level level, java.util.List<net.minecraft.network.chat.Component> tooltip,
+			net.minecraft.world.item.TooltipFlag flag) {
+		super.appendHoverText(stack, level, tooltip, flag);
+		tooltip.add(net.minecraft.network.chat.Component.translatable("item.better_with_gold.reinforced_golden_armor_helmet.description_0"));
+	}
+
 	public static class Helmet extends ReinforcedGoldenArmorItem {
 		public Helmet() {
 			super(ArmorItem.Type.HELMET, new Item.Properties());

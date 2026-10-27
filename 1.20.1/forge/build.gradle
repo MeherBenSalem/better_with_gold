@@ -19,6 +19,13 @@ legacyForge {
     runs {
         client {
             client()
+            gameDirectory = project.file('runs/client')
+        }
+        // QA client: joins a server on localhost:25565 straight away (see tools/qa/).
+        qaClient {
+            client()
+            gameDirectory = project.file('runs/client')
+            programArguments.addAll '--quickPlayMultiplayer', 'localhost:25565', '--username', 'Builder', '--width', '1920', '--height', '1080'
         }
         data {
             data()
@@ -26,6 +33,7 @@ legacyForge {
         }
         server {
             server()
+            gameDirectory = project.file('runs/server')
         }
     }
 

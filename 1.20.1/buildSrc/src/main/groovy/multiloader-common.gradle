@@ -129,3 +129,11 @@ publishing {
         }
     }
 }
+
+// Sources contain non-ASCII text (·, ✚); Java 17 would otherwise compile with the platform encoding.
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}
+tasks.withType(Javadoc).configureEach {
+    options.encoding = 'UTF-8'
+}
