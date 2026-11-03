@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.1
+
+The bundled licence file is now `LICENSE_better_with_gold`; its old name contained `|`, which Windows and Android
+cannot store, so unpacking or scanning the jar there could fail. Full notes: [patchnotes/2.0.1.md](patchnotes/2.0.1.md).
+
 ## 2.0.0
 
 Better With Gold becomes **Remnants | Fellowship**: sellswords, five classes, the command wheel, formations, the
