@@ -1,5 +1,9 @@
 ![Remnants | Fellowship 2.0](https://raw.githubusercontent.com/MeherBenSalem/better_with_gold/main/marketing/images/banner.png)
 
+**[Discord](https://discord.gg/TJc3CxR4jK) · [The modpack](https://www.curseforge.com/minecraft/modpacks/remnants-ashen-legacy) · [Support NightBeam](https://nightbeam.dev/support) · [NightBeam Pro](https://nightbeam.dev/memberships) · [All projects](https://nightbeam.dev/projects)**
+
+> **Play it in [Remnants: Ashen Legacy](https://www.curseforge.com/minecraft/modpacks/remnants-ashen-legacy)**, NightBeam's story-driven soulslike RPG modpack. It builds Fellowship into one rule set with the rest of the Remnants series.
+
 ## Lead a warband
 
 **Remnants | Fellowship** lets you hire named sellswords with gold and lead them as a warband. Five classes that each
@@ -152,3 +156,15 @@ just the players who attack their leader.
 ![The Bulwark's Challenge ring spreads out while the Skirmisher whirls](https://raw.githubusercontent.com/MeherBenSalem/better_with_gold/main/marketing/images/screenshots/challenge.png)
 
 More in the gallery: every class in action, hiring, the roster, downed and revived, the Warbanner.
+
+---
+
+### More from NightBeam Studio
+
+- **[Remnants: Ashen Legacy](https://www.curseforge.com/minecraft/modpacks/remnants-ashen-legacy)**: the story-driven soulslike RPG modpack built on NightBeam's mods
+- **[Premium server plugins](https://nightbeam.dev/store)**: anti-cheat, ranked PvP, SMP setups and more on BuiltByBit
+- **[NightBeam Pro](https://nightbeam.dev/memberships)**: the model library and NightBeam Forge credits, from $5 a month
+- **[Discord](https://discord.gg/TJc3CxR4jK)**: support, bug reports, suggestions and early looks
+- **[Support NightBeam](https://nightbeam.dev/support)**: help keep every mod free
+
+**Follow:** [YouTube](https://www.youtube.com/@nightbeamstudio) · [Instagram](https://www.instagram.com/nightbeamstudio/) · [X](https://x.com/NightBeamLLC) · [Facebook](https://www.facebook.com/profile.php?id=61574823331471) · [Source and issues](https://github.com/MeherBenSalem/better_with_gold)
