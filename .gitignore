@@ -12,3 +12,7 @@ out
 .vscode
 .release-upload-state.json
 __pycache__/
+
+target/
+*.ipr
+*.iws
