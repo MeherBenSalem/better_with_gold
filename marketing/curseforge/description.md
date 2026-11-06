@@ -1,6 +1,6 @@
 ![Remnants | Fellowship 2.0](https://raw.githubusercontent.com/MeherBenSalem/better_with_gold/main/marketing/images/banner.png)
 
-**[Discord](https://discord.gg/TJc3CxR4jK) · [Source and issues](https://github.com/MeherBenSalem/better_with_gold)**
+**[Docs](https://nightbeam.dev/docs/remnants-fellowship) · [Discord](https://discord.gg/TJc3CxR4jK) · [Source and issues](https://github.com/MeherBenSalem/better_with_gold)**
 
 ## Lead a warband
 
