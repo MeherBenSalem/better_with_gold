@@ -42,7 +42,7 @@ public class RosterScreen extends Screen implements RosterView.Host {
 
 	@Override
 	public boolean mouseClicked(MouseButtonEvent event, boolean doubleClick) {
-		return view.mouseClicked(event.x(), event.y(), event.button()) || super.mouseClicked(event, doubleClick);
+		return view.mouseClicked(event.x(), event.y(), MouseButtons.of(event)) || super.mouseClicked(event, doubleClick);
 	}
 
 	@Override
