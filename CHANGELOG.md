@@ -1,5 +1,10 @@
 # Changelog
 
+## 2.0.2
+
+On Minecraft 26.3 the roster's tabs, list and buttons respond to left-click again; 26.3 numbers mouse buttons
+differently and the roster read the raw number. Full notes: [patchnotes/2.0.2.md](patchnotes/2.0.2.md).
+
 ## 2.0.1
 
 The bundled licence file is now `LICENSE_better_with_gold`; its old name contained `|`, which Windows and Android
