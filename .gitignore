@@ -74,3 +74,6 @@ all-jars/
 releases/*-verification-*.json
 .release-upload-state.json
 secrets/
+
+# Maven output
+target/
