@@ -31,7 +31,7 @@ JAVA = {
     "25": Path(os.environ.get("JAVA_HOME_25", "C:/Program Files/Eclipse Adoptium/jdk-25.0.4.101-hotspot")),
 }
 MATRIX = [(mc, loader) for mc, loaders in (("1.20.1", ("fabric", "forge")),
-          ("1.21.1", ("fabric", "forge", "neoforge")), ("26.2", ("fabric", "neoforge")),
+          ("1.21.1", ("fabric", "neoforge")), ("26.2", ("fabric", "neoforge")),
           ("26.3", ("fabric", "neoforge"))) for loader in loaders]
 
 
@@ -41,10 +41,10 @@ def write_report(version):
         file = CACHE / "runs" / version / f"{mc}-{loader}" / "verification.json"
         if file.exists():
             row = json.loads(file.read_text())
-            jar = ROOT / "all-jars" / row["jar"]
+            jar = ROOT / "releases" / row["jar"]
             if jar.exists() and hashlib.sha512(jar.read_bytes()).hexdigest() == row["sha512"]:
                 rows.append(row)
-    output = ROOT / "all-jars" / f"client-verification-{version}.json"
+    output = ROOT / "releases" / f"client-verification-{version}.json"
     output.write_text(json.dumps(rows, indent=2))
 
 
@@ -97,7 +97,7 @@ def run_case(workspace, loader, args, agent, releases, dependencies):
         jar = download(next(f for f in release["files"] if f["primary"]), mods)
     else:
         jar = mods / name
-        shutil.copy2(ROOT / "all-jars" / name, jar)
+        shutil.copy2(ROOT / "releases" / name, jar)
     with zipfile.ZipFile(jar) as archive:
         metadata = "\n".join(archive.read(n).decode() for n in archive.namelist()
                              if n in ("fabric.mod.json", "META-INF/mods.toml", "META-INF/neoforge.mods.toml"))
@@ -175,7 +175,7 @@ def run_case(workspace, loader, args, agent, releases, dependencies):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--version", required=True)
-    parser.add_argument("--case", action="append", help="e.g. 26.3-fabric; default is all nine jars")
+    parser.add_argument("--case", action="append", help="e.g. 26.3-fabric; default is all eight jars")
     parser.add_argument("--published", action="store_true", help="test public baseline instead of local artifacts")
     parser.add_argument("--inspect", action="store_true", help="leave one --case client open for manual world/armor inspection")
     parser.add_argument("--timeout", type=int, default=180)

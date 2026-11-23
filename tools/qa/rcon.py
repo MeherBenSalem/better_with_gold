@@ -46,7 +46,7 @@ class Rcon:
         return rid, text
 
     def command(self, cmd, quiet_after=2.0):
-        # Forge 1.21.1's RCON sends no packet at all for a command with no output (its patched RconClient loops over
+        # Some RCON servers send no packet at all for a command with no output (a patched RconClient that loops over
         # the reply's bytes), so a plain request/reply client would wait forever. When nothing comes back within
         # quiet_after seconds, a marker request of an unknown type follows; every server answers it ("Unknown
         # request") after the command's own reply. The marker is never sent together with the command: vanilla's

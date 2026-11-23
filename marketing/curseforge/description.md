@@ -120,7 +120,7 @@ Classes are JSON files in `config/better_with_gold/classes/`: change their numbe
 | Minecraft | Loaders |
 | --- | --- |
 | 1.20.1 | Fabric, Forge |
-| 1.21.1 | Fabric, NeoForge, Forge |
+| 1.21.1 | Fabric, NeoForge |
 | 26.2 | Fabric, NeoForge |
 | 26.3 | Fabric, NeoForge |
 

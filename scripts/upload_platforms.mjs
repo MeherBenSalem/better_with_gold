@@ -1,5 +1,5 @@
 /**
- * Upload Better With Gold jars from all-jars/ to Modrinth + CurseForge.
+ * Upload Better With Gold jars from releases/ (./gradlew buildAll) to Modrinth + CurseForge.
  */
 import fs from "fs";
 import path from "path";
@@ -12,7 +12,7 @@ const ROOT = path.join(__dirname, "..");
 const MODRINTH_ID = "B3cmf35A";
 const CURSEFORGE_ID = "1305455";
 const MOD_TITLE = "Better With Gold";
-const JAR_DIR = path.join(ROOT, "all-jars");
+const JAR_DIR = path.join(ROOT, "releases");
 const RELEASE_STATE_PATH = path.join(ROOT, ".release-upload-state.json");
 
 async function loadEnv() {
@@ -78,10 +78,10 @@ function verifyClientBoots(parsed, version) {
   const reportPath = path.join(JAR_DIR, `client-verification-${version}.json`);
   if (!fs.existsSync(reportPath)) throw new Error(`Missing client boot report: ${reportPath}`);
   const results = JSON.parse(fs.readFileSync(reportPath, "utf8"));
-  const expected = ["1.20.1-fabric", "1.20.1-forge", "1.21.1-fabric", "1.21.1-forge",
+  const expected = ["1.20.1-fabric", "1.20.1-forge", "1.21.1-fabric",
     "1.21.1-neoforge", "26.2-fabric", "26.2-neoforge", "26.3-fabric", "26.3-neoforge"];
   if (parsed.length !== expected.length || new Set(parsed.map(p => `${p.game}-${p.loader}`)).size !== expected.length) {
-    throw new Error("Release must contain all nine supported Minecraft/loader jars");
+    throw new Error("Release must contain all eight supported Minecraft/loader jars");
   }
   for (const jar of parsed) {
     const test = results.find(r => r.case === `${jar.game}-${jar.loader}` && r.version === version);
@@ -91,7 +91,7 @@ function verifyClientBoots(parsed, version) {
       throw new Error(`Client boot verification missing, failed, or stale for ${jar.name}`);
     }
   }
-  console.log("Verified client boot and SHA-512 for all nine jars");
+  console.log("Verified client boot and SHA-512 for all eight jars");
 }
 
 function loadReleaseState() {
@@ -237,7 +237,7 @@ async function main() {
   const changelog = readChangelog(version, args.changelogFile);
   const state = loadReleaseState();
   const jars = collectJars(version);
-  if (!jars.length) throw new Error(`No better_with_gold jars for version ${version} in all-jars/`);
+  if (!jars.length) throw new Error(`No better_with_gold jars for version ${version} in releases/`);
   const parsed = jars.map(parseJar);
   verifyClientBoots(parsed, version);
 

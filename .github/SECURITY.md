@@ -7,7 +7,7 @@ The project is maintained across these version roots:
 | Version root | Minecraft line | Loaders |
 | --- | --- | --- |
 | `1.20.1/` | 1.20.1 | Fabric, Forge |
-\| `1.21.1/` \| 1.21.1 \| Fabric, NeoForge, Forge \|
+| `1.21.1/` | 1.21.1 | Fabric, NeoForge |
 | `26.2/` | 26.2 | Fabric, NeoForge |
 | `26.3/` | 26.3 | Fabric, NeoForge |
 

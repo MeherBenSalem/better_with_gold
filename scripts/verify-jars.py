@@ -6,7 +6,7 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parent.parent
 MATRIX = [(mc, loader) for mc, loaders in (("1.20.1", ("fabric", "forge")),
-          ("1.21.1", ("fabric", "forge", "neoforge")), ("26.2", ("fabric", "neoforge")),
+          ("1.21.1", ("fabric", "neoforge")), ("26.2", ("fabric", "neoforge")),
           ("26.3", ("fabric", "neoforge"))) for loader in loaders]
 
 
@@ -72,10 +72,6 @@ def fellowship(jar, archive, files):
     if "fabric.mod.json" in files:
         metadata = json.loads(archive.read("fabric.mod.json"))
         assert metadata["entrypoints"].get("client"), f"Fabric client entrypoint missing in {jar.name}"
-    if "-forge-1.21.1-" in jar.name:
-        mixins = json.loads(archive.read("better_with_gold.forge.mixins.json"))
-        assert "GuiMixin" in mixins.get("client", []), f"Party frame HUD mixin missing in {jar.name}"
-        assert f"{PKG}mixin/GuiMixin.class" in files
 
 
 if __name__ == "__main__":
@@ -83,4 +79,4 @@ if __name__ == "__main__":
     parser.add_argument("--version", required=True)
     args = parser.parse_args()
     for mc, loader in MATRIX:
-        verify(ROOT / "all-jars" / f"better_with_gold-{loader}-{mc}-{args.version}.jar")
+        verify(ROOT / "releases" / f"better_with_gold-{loader}-{mc}-{args.version}.jar")

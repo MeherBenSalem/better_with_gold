@@ -17,13 +17,13 @@ async function read(url, headers = {}) {
   if (!response.ok) throw new Error(`Verification HTTP ${response.status} for ${url}`);
   return response.json();
 }
-const boots = JSON.parse(fs.readFileSync(path.join(root, `all-jars/client-verification-${version}.json`)));
-if (boots.length !== 9 || boots.some(row => !row.passed)) throw new Error("Nine passing client tests required");
+const boots = JSON.parse(fs.readFileSync(path.join(root, `releases/client-verification-${version}.json`)));
+if (boots.length !== 8 || boots.some(row => !row.passed)) throw new Error("Eight passing client tests required");
 const state = JSON.parse(fs.readFileSync(path.join(root, ".release-upload-state.json")));
 const modrinth = await read("https://api.modrinth.com/v2/project/B3cmf35A/version");
 const results = [];
 for (const boot of boots) {
-  const jar = fs.readFileSync(path.join(root, "all-jars", boot.jar));
+  const jar = fs.readFileSync(path.join(root, "releases", boot.jar));
   const split = boot.case.lastIndexOf("-");
   const game = boot.case.slice(0, split), loader = boot.case.slice(split + 1);
   const number = `${version}+${loader}-${game}`;
@@ -60,5 +60,5 @@ for (const boot of boots) {
   results.push(row);
   console.log(JSON.stringify(row));
 }
-fs.writeFileSync(path.join(root, `all-jars/platform-verification-${version}.json`), JSON.stringify(results, null, 2));
+fs.writeFileSync(path.join(root, `releases/platform-verification-${version}.json`), JSON.stringify(results, null, 2));
 console.log(`Verified metadata for ${results.length} jars on both platforms; CurseForge available: ${results.filter(r => r.curseforgeAvailable).length}/9; hashes: ${results.filter(r => r.curseforgeHashVerified).length}/9`);
