@@ -7,7 +7,7 @@ const fs = require('fs');
 const { chromium } = require('playwright');
 
 // The release and the supported Minecraft versions. Adding a version is one line here
-// (plus one row in the compatibility table of curseforge/description.md, then tools/make_modrinth_md.py).
+// (plus one row in the compatibility table of curseforge/description.md).
 // Only the NightBeam convention's targets: 1.20.1 (Fabric, Forge); 1.21.1, 26.2, 26.3 (Fabric, NeoForge).
 const RELEASE = { version: '2.0', name: 'Remnants | Fellowship' };
 const VERSIONS = [

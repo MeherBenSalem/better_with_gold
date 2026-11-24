@@ -73,7 +73,7 @@ long and starts on a beat, so the music loops with the picture.
 
 - Upload the MP4 as a Reel and set `cover.jpg` as the cover. Keep the original audio; a trending track on top would
   bury the voiceover.
-- Paste `caption.txt`. Put the Modrinth link in your bio before posting, since the caption points there.
+- Paste `caption.txt`. Put the CurseForge link in your bio before posting, since the caption points there.
 - Alt text, for example: "Minecraft gameplay: a warband of five hired allies fights pillagers at sunset; lightning
   strikes, a knight taunts, an archer fires three arrows, a healer heals, a command wheel, a fallen ally is revived, a
   banner is planted."

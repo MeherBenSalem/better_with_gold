@@ -1,4 +1,4 @@
-/** Verify remote release metadata and uploaded bytes without changing either platform. */
+/** Verify CurseForge release metadata and uploaded bytes without changing anything (NightBeam publishes to CurseForge only). */
 import fs from "node:fs";
 import path from "node:path";
 import { createHash } from "node:crypto";
@@ -20,22 +20,11 @@ async function read(url, headers = {}) {
 const boots = JSON.parse(fs.readFileSync(path.join(root, `releases/client-verification-${version}.json`)));
 if (boots.length !== 8 || boots.some(row => !row.passed)) throw new Error("Eight passing client tests required");
 const state = JSON.parse(fs.readFileSync(path.join(root, ".release-upload-state.json")));
-const modrinth = await read("https://api.modrinth.com/v2/project/B3cmf35A/version");
 const results = [];
 for (const boot of boots) {
   const jar = fs.readFileSync(path.join(root, "releases", boot.jar));
   const split = boot.case.lastIndexOf("-");
   const game = boot.case.slice(0, split), loader = boot.case.slice(split + 1);
-  const number = `${version}+${loader}-${game}`;
-  const release = modrinth.find(row => row.version_number === number);
-  const file = release?.files.find(row => row.filename === boot.jar);
-  if (!file || file.hashes.sha512 !== boot.sha512 || release.status !== "listed"
-      || !release.game_versions.includes(game) || !release.loaders.includes(loader)) {
-    throw new Error(`Modrinth verification failed: ${boot.jar}`);
-  }
-  if (loader === "fabric" && !release.dependencies.some(row => row.project_id === "P7dR8mSH" && row.dependency_type === "required")) {
-    throw new Error(`Modrinth Fabric API relation missing: ${boot.jar}`);
-  }
   const upload = state.uploads.find(row => row.platform === "curseforge" && row.version === version && row.fileName === boot.jar);
   if (!upload?.remoteId) throw new Error(`CurseForge upload ID missing: ${boot.jar}`);
   const cf = (await read(`https://api.curseforge.com/v1/mods/1305455/files/${upload.remoteId}`,
@@ -52,7 +41,7 @@ for (const boot of boots) {
     throw new Error(`CurseForge Fabric API relation missing: ${boot.jar}`);
   }
   const row = { case: boot.case, jar: boot.jar, sha512: boot.sha512,
-    modrinthId: release.id, modrinthStatus: release.status, curseforgeId: cf.id,
+    curseforgeId: cf.id,
     curseforgeStatus: cf.fileStatus, curseforgeStatusName: { 1: "Processing", 3: "UnderReview", 4: "Approved",
       10: "Released", 18: "UnderManualReview", 19: "ScanningForMalware", 20: "ProcessingFile" }[cf.fileStatus] || "Pending",
     curseforgeAvailable: cf.isAvailable,
@@ -61,4 +50,4 @@ for (const boot of boots) {
   console.log(JSON.stringify(row));
 }
 fs.writeFileSync(path.join(root, `releases/platform-verification-${version}.json`), JSON.stringify(results, null, 2));
-console.log(`Verified metadata for ${results.length} jars on both platforms; CurseForge available: ${results.filter(r => r.curseforgeAvailable).length}/9; hashes: ${results.filter(r => r.curseforgeHashVerified).length}/9`);
+console.log(`Verified metadata for ${results.length} jars on CurseForge; CurseForge available: ${results.filter(r => r.curseforgeAvailable).length}/9; hashes: ${results.filter(r => r.curseforgeHashVerified).length}/9`);

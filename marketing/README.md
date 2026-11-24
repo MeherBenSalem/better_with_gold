@@ -1,15 +1,13 @@
 # Remnants | Fellowship: store assets
 
-Everything the CurseForge and Modrinth pages need, made from the mod itself: real in-game screenshots, the mod's own
+Everything the CurseForge page needs (NightBeam publishes to CurseForge only), made from the mod itself: real in-game screenshots, the mod's own
 pixel art, and two OFL fonts. Nothing here is AI-generated, and every number in the copy comes from the code or the
 generated config (`docs/reference/`).
 
 | Path | What it is |
 | --- | --- |
-| `curseforge/summary.txt` | The one-line summary (CurseForge "summary", Modrinth "description") |
-| `curseforge/description.md` | The page body, Markdown with absolute image links; paste it into either store |
-| `modrinth/description.md` | The Modrinth body, made from the CurseForge copy by `python3 tools/make_modrinth_md.py .` (the screenshots go in the project's Gallery tab instead) |
-| `modrinth/summary.txt` | The Modrinth summary (the same text). The Publish workflow's `update_listing` option sends both to Modrinth |
+| `curseforge/summary.txt` | The one-line summary (CurseForge "summary") |
+| `curseforge/description.md` | The page body, Markdown with absolute image links |
 | `images/icon.png` | Project icon, 512×512: the Warbanner over the five class emblems, inside a gold diamond |
 | `images/banner.png` | Top-of-page banner, 1600×520: the name over an Arc Storm landing on a pillager band at sunset |
 | `images/card-*.png` | Feature cards, 1600×900, one per section of the page |
@@ -72,15 +70,12 @@ NODE_PATH="$(npm root -g)" node marketing/source/render.cjs card-command  # one 
 under the SIL Open Font License). The formation tiles on the command card are drawn from the slot offsets in
 `common/.../core/Formation.java`; the configuration card prints the real `docs/reference/fellowship.json` and
 `classes/bulwark.json`. The supported versions and loaders are one list at the top of `render.cjs`. Supporting a new
-Minecraft version means adding one line there, plus one row to the table in `curseforge/description.md`, then running
-`python3 tools/make_modrinth_md.py .` to refresh the Modrinth copy. Only the NightBeam convention's targets are listed:
+Minecraft version means adding one line there, plus one row to the table in `curseforge/description.md`. Only the NightBeam convention's targets are listed:
 1.20.1 (Fabric, Forge) and 1.21.1, 26.2, 26.3 (Fabric, NeoForge).
 
 ## Posting checklist
 
-- **Icon:** `images/icon.png` on both stores.
+- **Icon:** `images/icon.png`.
 - **CurseForge:** summary from `summary.txt`, body from `description.md`, gallery as above. Categories: Adventure and
   RPG, Mobs, Armor/Tools/Weapons.
-- **Modrinth:** body and summary from `modrinth/` (or the Publish workflow's `update_listing`), the same gallery, `battle-storm.png` as the featured image. Tags: adventure, mobs, game-mechanics,
-  equipment. Environment: required on client and server.
 - **Reel:** see `reel/README.md`.
